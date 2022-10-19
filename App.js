@@ -18,10 +18,16 @@ class App extends React.Component {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
+            options={{
+              title: 'Welcome!',
+            }}
           />
           <Stack.Screen
             name="Beta"
             component={BetaScreen}
+            options={{
+              title: 'Send Beta?',
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>
