@@ -1,12 +1,11 @@
 import React ,{useState} from 'react';
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
 
 export default function BetaScreen() {
   const [image,setImage] = useState(null)
-  const navigation = useNavigation();
+  
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -22,32 +21,70 @@ export default function BetaScreen() {
   
   
   return (
-    <View style={styles.container}>
-      <Text>Add betas here!</Text>
-      
-      <StatusBar hidden={true} />
-      {image && <Image source={{uri:image}} style={{flex:1,width:600}} />}
-      <Button title="Pick Image" onPress={pickImage}/>
-      <StatusBar style="auto" />
+    <View style={styles.screen}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Add betas.</Text>
+        
+        
 
-      <Button
-        title="Go back hooooome"
-        onPress={() =>
-          navigation.navigate('Home')
-        }
-      />
+        <View style={styles.buttonLayout}>
+          <TouchableOpacity 
+            onPress={pickImage}
+            style={styles.buttonLayout}>
+            <Text style={styles.buttonText}>Choose Image of Route</Text>
+          </TouchableOpacity> 
+        </View>
 
+        {image && <Image source={{uri:image}} style={styles.betaImage} />}
+        
+      </View>
     </View>
   );
   
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
     backgroundColor: '#264653',
-    alignItems: 'center',
-    justifyContent: 'center',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+    
   },
+  container: {
+    marginHorizontal:20,
+    marginVertical:40,
+    marginTop: 80,
+  },
+  title: {
+    color: '#fff',
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 50,
+    marginBottom: 30,
+  },
+  buttonLayout: {
+    fontFamily: 'Montserrat_200ExtraLight',
+    backgroundColor: "#CE624D",
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 12
+  },
+  buttonText: {
+    fontSize: 13,
+    color: "#fff",
+    fontFamily: 'Montserrat_400Regular',
+    alignSelf: "center",
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  },
+  betaImage: {
+    marginTop: 20, 
+    width: '100%', 
+    height: '75%', 
+    alignSelf: 'center'
+  }
 });
 
+//{image && <Image source={{uri:image}} style={{flex:1,width:600}} />}
+//<StatusBar hidden={true} />
+//<StatusBar style="auto" />

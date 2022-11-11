@@ -19,6 +19,7 @@ export default function HomeScreen() {
   
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
+    Montserrat_400Regular
   });
 
   useEffect(() => {
@@ -101,7 +102,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 6,
     paddingHorizontal: 12
-    
   },
   buttonText: {
     fontSize: 13,
