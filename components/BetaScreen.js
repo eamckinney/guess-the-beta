@@ -45,7 +45,7 @@ export default function BetaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#264653',
     alignItems: 'center',
     justifyContent: 'center',
   },

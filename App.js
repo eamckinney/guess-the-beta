@@ -26,8 +26,8 @@ export default function App() {
                 <Ionicons
                   name={
                     focused
-                      ? 'ios-information-circle'
-                      : 'ios-information-circle-outline'
+                      ? 'flash'
+                      : 'flash'
                   }
                   size={size}
                   color={color}
@@ -36,16 +36,25 @@ export default function App() {
             } else if (route.name === 'Beta') {
               return (
                 <Ionicons
-                  name={focused ? 'ios-list' : 'ios-list'}
+                  name={focused ? 'flame' : 'flame'}
                   size={size}
                   color={color}
                 />
               );
             }
           },
-          tabBarInactiveTintColor: 'gray',
-          tabBarActiveTintColor: 'tomato',
+          //tabBarInactiveTintColor: 'gray',
+          //tabBarActiveTintColor: 'tomato',
         })}
+        tabBarOptions={{
+          activeTintColor: 'white',
+          inactiveTintColor: 'gray',
+          style: {
+            borderTopColor: '#66666666',
+            backgroundColor: '#000',
+            elevation: 0,
+          },
+        }}
       >
 				
         
