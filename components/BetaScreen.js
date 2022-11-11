@@ -2,10 +2,11 @@ import React ,{useState} from 'react';
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
-
+import { useNavigation } from '@react-navigation/native';
 
 export default function BetaScreen() {
   const [image,setImage] = useState(null)
+  const navigation = useNavigation();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -20,7 +21,6 @@ export default function BetaScreen() {
   };
   
   
-  
   return (
     <View style={styles.container}>
       <Text>Add betas here!</Text>
@@ -33,7 +33,7 @@ export default function BetaScreen() {
       <Button
         title="Go back hooooome"
         onPress={() =>
-          this.props.navigation.navigate('Home')
+          navigation.navigate('Home')
         }
       />
 

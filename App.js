@@ -1,97 +1,79 @@
-import 'react-native-gesture-handler';
-import React, { useCallback, useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './components/HomeScreen';
-import BetaScreen from './components/BetaScreen';
-import * as SplashScreen from 'expo-splash-screen';
+import "react-native-gesture-handler";
+import React, { useCallback, useEffect, useState } from "react";
+//import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
 
-import Entypo from '@expo/vector-icons/Entypo';
-import * as Font from 'expo-font';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
+import BetaScreen from "./components/BetaScreen";
+import HomeScreen from "./components/HomeScreen";
 
-
-
-
-// Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const Stack = createStackNavigator();
-  const [appIsReady, setAppIsReady] = useState(false);
+	const Stack = createStackNavigator();
+  const Tab = createBottomTabNavigator();
 
-  useEffect(() => {
-    async function prepare() {
-      try {
-        // Pre-load fonts, make any API calls you need to do here
-        await Font.loadAsync(Entypo.font);
-        // Artificially delay for two seconds to simulate a slow loading
-        // experience. Please remove this if you copy and paste the code!
-        //await new Promise(resolve => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // Tell the application to render
-        setAppIsReady(true);
-      }
-    }
-
-    prepare();
-  }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
-  
-  return (
-    <View
-      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-      onLayout={onLayoutRootView}>
-      <Text>SplashScreen Demo! 👋</Text>
-      <Entypo name="rocket" size={30} />
-    </View>
-    /*<NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: 'Welcome!',
-          }}
+	return (
+		<NavigationContainer>
+			<Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            if (route.name === 'Home') {
+              return (
+                <Ionicons
+                  name={
+                    focused
+                      ? 'ios-information-circle'
+                      : 'ios-information-circle-outline'
+                  }
+                  size={size}
+                  color={color}
+                />
+              );
+            } else if (route.name === 'Beta') {
+              return (
+                <Ionicons
+                  name={focused ? 'ios-list' : 'ios-list'}
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+          },
+          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: 'tomato',
+        })}
+      >
+				
+        
+        <Tab.Screen 
+          name="Home" 
+          component={HomeScreen} 
+          
         />
-        <Stack.Screen
-          name="Beta"
-          component={BetaScreen}
-          options={{
-            title: 'Send Beta?',
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>*/
-  );
-  
+
+				<Tab.Screen
+					name="Beta"
+					component={BetaScreen}
+					options={{
+						title: "Betas",
+					}}
+				/>
+			</Tab.Navigator>
+		</NavigationContainer>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: "#fff",
+		alignItems: "center",
+		justifyContent: "center",
+	},
 });
 
 //export default App;
