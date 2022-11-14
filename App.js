@@ -9,6 +9,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
 import BetaScreen from "./components/BetaScreen";
+import CreateBeta from "./components/CreateBeta";
+import ExploreScreen from "./components/ExploreScreen";
 import HomeScreen from "./components/HomeScreen";
 
 
@@ -21,22 +23,26 @@ export default function App() {
 			<Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            if (route.name === 'Home') {
+            if (route.name === 'Challenges') {
               return (
                 <Ionicons
-                  name={
-                    focused
-                      ? 'flash'
-                      : 'flash'
-                  }
+                  name={focused ? 'flame' : 'flame'}
                   size={size}
                   color={color}
                 />
               );
-            } else if (route.name === 'Beta') {
+            } else if (route.name === 'Explore') {
               return (
                 <Ionicons
-                  name={focused ? 'flame' : 'flame'}
+                  name={focused ? 'rocket' : 'rocket'}
+                  size={size}
+                  color={color}
+                />
+              );
+            } else if (route.name === 'Create Beta') {
+              return (
+                <Ionicons
+                  name={focused ? 'add-circle' : 'add'}
                   size={size}
                   color={color}
                 />
@@ -59,16 +65,18 @@ export default function App() {
 				
         
         <Tab.Screen 
-          name="Home" 
+          name="Challenges" 
           component={HomeScreen} 
-          
         />
-
+        <Tab.Screen 
+          name="Create Beta" 
+          component={CreateBeta} 
+        />
 				<Tab.Screen
-					name="Beta"
-					component={BetaScreen}
+					name="Explore"
+					component={ExploreScreen}
 					options={{
-						title: "Betas",
+						title: "Explore",
 					}}
 				/>
 			</Tab.Navigator>

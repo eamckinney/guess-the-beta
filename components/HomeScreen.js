@@ -1,8 +1,9 @@
 import 'react-native-gesture-handler';
 import React, { useCallback, useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -16,6 +17,19 @@ SplashScreen.preventAutoHideAsync();
 export default function HomeScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
   const navigation = useNavigation();
+
+  const [image,setImage] = useState(null)
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+      allowsEditing:true
+    });
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
   
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
@@ -27,6 +41,7 @@ export default function HomeScreen() {
       try {
         // Pre-load fonts, make any API calls you need to do here
         await Font.loadAsync(Entypo.font);
+        
         //await Font.loadAsync(Montserrat_100Thin); WISH THIS WORKED!
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
@@ -56,22 +71,28 @@ export default function HomeScreen() {
   if (!appIsReady) {
     return null;
   }
+
+  
   
   return (
     <View
       style={styles.screen}
       onLayout={onLayoutRootView}>
         <View style={styles.container}>
+
           <Text style={styles.title}>Welcome.</Text>
+
           <View style={styles.buttonLayout}>
             <TouchableOpacity 
-              onPress={() => navigation.navigate('Beta')}
+              onPress={navigation.navigate}
               style={styles.buttonLayout}
               >
               <Text style={styles.buttonText}>Add some betas</Text>
             </TouchableOpacity> 
-            
           </View>
+
+          {image && <Image source={{uri:image}} style={styles.betaImage} />}
+
         </View>
     </View>
   );
@@ -110,6 +131,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     textTransform: "uppercase",
     letterSpacing: 2,
+  },
+  betaImage: {
+    marginTop: 20, 
+    width: '100%', 
+    height: '75%', 
+    alignSelf: 'center'
   }
 });
 
