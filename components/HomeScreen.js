@@ -16,7 +16,9 @@ SplashScreen.preventAutoHideAsync();
 
 export default function HomeScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
+  
   const navigation = useNavigation();
+  const createBeta = () => navigation.navigate('Create Beta')
 
   const [image,setImage] = useState(null)
   const pickImage = async () => {
@@ -84,7 +86,7 @@ export default function HomeScreen() {
 
           <View style={styles.buttonLayout}>
             <TouchableOpacity 
-              onPress={navigation.navigate}
+              onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
               <Text style={styles.buttonText}>Add some betas</Text>

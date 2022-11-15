@@ -4,18 +4,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import BetaScreen from "./components/BetaScreen";
 import CreateBeta from "./components/CreateBeta";
 import ExploreScreen from "./components/ExploreScreen";
 import HomeScreen from "./components/HomeScreen";
 
 
 export default function App() {
-	const Stack = createStackNavigator();
   const Tab = createBottomTabNavigator();
 
 	return (
