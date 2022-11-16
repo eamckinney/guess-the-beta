@@ -20,7 +20,7 @@ export default function CreateBeta() {
   const navigation = useNavigation();
   const [holds, setHolds] = useState([]);
 
-  const ref = useRef(null);
+  const canvas = useRef(null);
   
   const tap = Gesture.Tap().onStart((g) => {
       console.log(`Tap at ${g.x} ${g.y}`);
@@ -28,13 +28,17 @@ export default function CreateBeta() {
     });
 
   const addHold = (x, y) => {
-    const ctx = ref.current.getContext('2d');
+    const ctx = canvas.current.getContext('2d');
     ctx.beginPath();
-    ctx.arc(100, 150, 20, 0, 2 * Math.PI);
+    ctx.arc(x, y, 30, 0, 2 * Math.PI);
     ctx.closePath();
-    ctx.fillStyle = 'blue';
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    //ctx.fillStyle = 'red';
+    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
     ctx.fill();
-    console.log(`circle added at ${x} and ${y}`);
+    console.log(`circle added at ${x} and ${y}`);    
   }
 
   
@@ -53,26 +57,32 @@ export default function CreateBeta() {
     pickImage();
     //navigation.navigate('Challenges');
     console.log('image loaded!');
+    
+    
 
-    if (ref.current) {
-      const ctx = ref.current.getContext('2d');
+    if (canvas.current) {
+      const ctx = canvas.current.getContext('2d');
+      
+      canvas.current.height = 915;
+      canvas.current.width = 412;
 
       if (ctx) {
         console.log('Canvas is ready');
       }
     }
 
-  }, [ref]);
+  }, [canvas]);
 
   
   
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <GestureDetector gesture={tap}>
+    <GestureHandlerRootView style={styles.screen}>
+      <Text style={styles.title}>Select your holds.</Text>
+      <GestureDetector gesture={tap} style={{ flex: 1 }}>
         <ImageBackground source={{uri:image}} style={styles.betaImage}>
 
           <StatusBar hidden={true} />
-          <Canvas ref={ref} style={styles.canvas} />
+          <Canvas ref={canvas} style={styles.canvas} />
         
         </ImageBackground>
       </GestureDetector>
@@ -85,22 +95,30 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#264653',
+    
     //alignItems: 'center',
     //justifyContent: 'center',
   },
+  title: {
+    color: '#fff',
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 30,
+    marginHorizontal: 20,
+    marginTop: 30,
+  },
   betaImage: {
+    flex: 1,
+    marginTop: 30, 
     width: '100%', 
     height: '100%', 
     alignSelf: 'center',
-    resizeMode: 'contain',
-    alignItems: 'center',
-    justifyContent: 'center',
+    resizeMode: 'cover',
+    //alignItems: 'center',
+    //justifyContent: 'center',
   },
   canvas: {
-    width: '100%', 
-    height: '100%', 
-    backgroundColor: 'black',
-    opacity: 0.5,
+    //backgroundColor: 'black',
+    //opacity: 0.5,
     //alignSelf: 'center',
     //justifyContent: 'center',
   }
