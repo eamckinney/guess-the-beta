@@ -27,13 +27,13 @@ export default function CreateBeta() {
       //console.log(`Tap at ${g.x} ${g.y}`);
       const ctx = canvas.current.getContext('2d');
 
-      for (let i = 0; i < holds.length; i++) {
+      /*for (let i = 0; i < holds.length; i++) {
         if (g.x >= (holds[i][0]-15) && g.x <= (holds[i][0]+15) && g.y >= (holds[i][1]-15) && g.y <= (holds[i][1]+15)) {
           removeHold(holds[i][0],holds[i][1], ctx);
           console.log("there's another hold there!");
           return;
         } else { continue; }
-      }
+      }*/
 
       addHold(g.x, g.y, ctx);
     });
@@ -75,6 +75,24 @@ export default function CreateBeta() {
     console.log(`circle REMOVED at ${x} and ${y}`);
   }
 
+  const undo = () => {
+    const ctx = canvas.current.getContext('2d');
+
+    ctx.globalCompositeOperation = 'destination-out'
+    ctx.beginPath();
+    ctx.arc(holds[holds.length-1][0], holds[holds.length-1][1], 30, 0, 2 * Math.PI);
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fill();
+    ctx.closePath();
+
+    console.log("hold to remove: " + holds[holds.length-1][0], holds[holds.length-1][1]);
+    holds.splice(holds.indexOf([holds[holds.length-1][0],holds[holds.length-1][1]]), 1);
+    console.log("holds: " + holds);
+
+
+  }
   
   useEffect(() => {
     const pickImage = async () => {
@@ -122,8 +140,14 @@ export default function CreateBeta() {
       </GestureDetector>
       <View style={styles.buttonLayout}>
         <TouchableOpacity 
+          onPress={ () => undo() }
+          style={ [styles.buttonStyle, { backgroundColor: "#203B44"}]}
+          >
+          <Text style={styles.buttonText}>Undo</Text>
+        </TouchableOpacity> 
+        <TouchableOpacity 
           onPress={ () => modifyHolds() }
-          style={styles.buttonLayout}
+          style={ [styles.buttonStyle, { backgroundColor: "#E76F51"}]}
           >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity> 
@@ -160,12 +184,17 @@ const styles = StyleSheet.create({
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
-    backgroundColor: "#E76F51",
-    borderRadius: 10,
-    paddingVertical: 2,
-    //paddingHorizontal: 12,
     marginVertical: 10,
     marginHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonStyle: {
+    marginHorizontal: 20, 
+    borderRadius: 10, 
+    paddingVertical: 10, 
+    paddingHorizontal: 50 
   },
   buttonText: {
     fontSize: 13,
