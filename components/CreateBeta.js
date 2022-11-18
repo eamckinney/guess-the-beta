@@ -24,7 +24,7 @@ export default function CreateBeta() {
   const canvas = useRef(null);
   
   const tap = Gesture.Tap().onStart((g) => {
-      console.log(`Tap at ${g.x} ${g.y}`);
+      //console.log(`Tap at ${g.x} ${g.y}`);
       const ctx = canvas.current.getContext('2d');
 
       for (let i = 0; i < holds.length; i++) {
@@ -52,11 +52,13 @@ export default function CreateBeta() {
 
     setHolds([...holds, [x,y]]);
     console.log(`circle added at ${x} and ${y}`);
+    console.log("holds.length: " + holds.length);
+
     //console.log(`holds: ${holds}`);
   }
 
   const removeHold = (x, y, ctx) => {
-    //const ctx = canvas.current.getContext('2d');
+
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath();
     ctx.arc(x, y, 30, 0, 2 * Math.PI);
