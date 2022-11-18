@@ -23,7 +23,9 @@ export default function CreateBeta() {
 
   const canvas = useRef(null);
   
-  const tap = Gesture.Tap().onStart((g) => {
+  const tap = Gesture.Tap()
+    .maxDistance(2)
+    .onStart((g) => {
       //console.log(`Tap at ${g.x} ${g.y}`);
       const ctx = canvas.current.getContext('2d');
 
@@ -35,14 +37,15 @@ export default function CreateBeta() {
         } else { continue; }
       }*/
 
-      addHold(g.x, g.y, ctx);
+      addHold(g.x, g.y, 30, ctx);
     });
 
-  const addHold = (x, y, ctx) => {
-    
+  const addHold = (x, y, r, ctx) => {
+    if (!ctx) { ctx = canvas.current.getContext('2d'); }
+
     ctx.globalCompositeOperation = 'source-over'
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
     ctx.strokeStyle = '#E76F51';
     ctx.lineWidth = 4;
     ctx.stroke();
@@ -50,18 +53,18 @@ export default function CreateBeta() {
     ctx.fill();
     ctx.closePath();
 
-    setHolds([...holds, [x,y]]);
+    setHolds([...holds, [x,y,r]]);
     console.log(`circle added at ${x} and ${y}`);
     console.log("holds.length: " + holds.length);
 
     //console.log(`holds: ${holds}`);
   }
 
-  const removeHold = (x, y, ctx) => {
+  const removeHold = (x, y, r, ctx) => {
 
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath();
-    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.arc(x, y, r, 0, 2 * Math.PI);
     ctx.lineWidth = 4;
     ctx.stroke();
     ctx.fillStyle = "rgba(0,0,0,1)";
@@ -80,7 +83,7 @@ export default function CreateBeta() {
 
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath();
-    ctx.arc(holds[holds.length-1][0], holds[holds.length-1][1], 30, 0, 2 * Math.PI);
+    ctx.arc(holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2], 0, 2 * Math.PI);
     ctx.lineWidth = 4;
     ctx.stroke();
     ctx.fillStyle = "rgba(0,0,0,1)";
@@ -90,8 +93,25 @@ export default function CreateBeta() {
     console.log("hold to remove: " + holds[holds.length-1][0], holds[holds.length-1][1]);
     holds.splice(holds.indexOf([holds[holds.length-1][0],holds[holds.length-1][1]]), 1);
     console.log("holds: " + holds);
+  }
 
+  let pinchScale = 1;
+  const pinch = Gesture.Pinch().onUpdate((g) => {
+    //scale.value = savedScale.value * g.scale;
+    console.log(`pinch! scale: ${g.scale}, coordinates: ${g.focalX}, ${g.focalY}`);
+    pinchScale = g.scale;
 
+  }).onEnd(() => {
+    resizeHold(pinchScale);
+  })
+
+  const gestures = Gesture.Simultaneous(pinch, tap);
+
+  const resizeHold = (scale) => {
+    const currentHold = [holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2]];
+
+    undo();
+    addHold(currentHold[0], currentHold[1], (currentHold[2]*scale), null);
   }
   
   useEffect(() => {
@@ -130,7 +150,7 @@ export default function CreateBeta() {
   return (
     <GestureHandlerRootView style={styles.screen}>
       <Text style={styles.title}>Select your holds.</Text>
-      <GestureDetector gesture={tap} style={{ flex: 1 }}>
+      <GestureDetector gesture={gestures} style={{ flex: 1 }}>
         <ImageBackground source={{uri:image}} style={styles.betaImage}>
 
           <StatusBar hidden={true} />
@@ -217,7 +237,9 @@ const styles = StyleSheet.create({
 //<StatusBar style="auto" />
 
 // REACT-NATIVE-CANVAS: https://www.atomlab.dev/tutorials/react-native-canvas
+
 // RE-SIZE & MOVE CIRCLES? https://blog.bitsrc.io/using-the-gesture-handler-in-react-native-c07f84ddfa49
+// USE PINCH: https://docs.swmansion.com/react-native-gesture-handler/docs/2.0.0/api/gestures/pinch-gesture/
 
 // CALLBACK?? https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780
 
