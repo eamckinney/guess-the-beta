@@ -44,7 +44,7 @@ export default function HomeScreen() {
         // Pre-load fonts, make any API calls you need to do here
         await Font.loadAsync(Entypo.font);
         
-        //await Font.loadAsync(Montserrat_100Thin); WISH THIS WORKED!
+        await Font.loadAsync('Montserrat_200ExtraLight', 'Montserrat_400Regular');
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         //await new Promise(resolve => setTimeout(resolve, 2000));

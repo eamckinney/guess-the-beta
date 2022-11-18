@@ -8,37 +8,69 @@ import {
   GestureDetector,
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
-
 import Canvas from 'react-native-canvas';
 //import { Canvas, Path, Circle } from "@shopify/react-native-skia";
-
-
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null)
   
   const navigation = useNavigation();
+
+  const backToChallenges = () => navigation.navigate('Challenges')
+  const modifyHolds = () => navigation.navigate('Modify Holds', {canvas: canvas, holds: holds, image: image});
+
   const [holds, setHolds] = useState([]);
 
   const canvas = useRef(null);
   
   const tap = Gesture.Tap().onStart((g) => {
       console.log(`Tap at ${g.x} ${g.y}`);
-      addHold(g.x, g.y);
+      const ctx = canvas.current.getContext('2d');
+
+      for (let i = 0; i < holds.length; i++) {
+        if (g.x >= (holds[i][0]-15) && g.x <= (holds[i][0]+15) && g.y >= (holds[i][1]-15) && g.y <= (holds[i][1]+15)) {
+          removeHold(holds[i][0],holds[i][1], ctx);
+          console.log("there's another hold there!");
+          return;
+        } else { continue; }
+      }
+
+      addHold(g.x, g.y, ctx);
     });
 
-  const addHold = (x, y) => {
-    const ctx = canvas.current.getContext('2d');
+  const addHold = (x, y, ctx) => {
+    
+    ctx.globalCompositeOperation = 'source-over'
     ctx.beginPath();
     ctx.arc(x, y, 30, 0, 2 * Math.PI);
-    ctx.closePath();
-    ctx.strokeStyle = 'red';
+    ctx.strokeStyle = '#E76F51';
     ctx.lineWidth = 4;
     ctx.stroke();
-    //ctx.fillStyle = 'red';
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillStyle = "rgba(0,0,0, 0.2)";
     ctx.fill();
-    console.log(`circle added at ${x} and ${y}`);    
+    ctx.closePath();
+
+    setHolds([...holds, [x,y]]);
+    console.log(`circle added at ${x} and ${y}`);
+    //console.log(`holds: ${holds}`);
+  }
+
+  const removeHold = (x, y, ctx) => {
+    //const ctx = canvas.current.getContext('2d');
+    ctx.globalCompositeOperation = 'destination-out'
+    ctx.beginPath();
+    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    ctx.fillStyle = "rgba(0,0,0,1)";
+    ctx.fill();
+    ctx.closePath();
+
+    console.log("holds.length: " + holds.length);
+    holds.splice(holds.indexOf([x,y]), 1);
+    console.log("holds.length: " + holds.length);
+
+    console.log(`circle REMOVED at ${x} and ${y}`);
   }
 
   
@@ -86,6 +118,14 @@ export default function CreateBeta() {
         
         </ImageBackground>
       </GestureDetector>
+      <View style={styles.buttonLayout}>
+        <TouchableOpacity 
+          onPress={ () => modifyHolds() }
+          style={styles.buttonLayout}
+          >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity> 
+      </View>
     </GestureHandlerRootView>
   );
   
@@ -116,6 +156,23 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     //justifyContent: 'center',
   },
+  buttonLayout: {
+    fontFamily: 'Montserrat_200ExtraLight',
+    backgroundColor: "#E76F51",
+    borderRadius: 10,
+    paddingVertical: 2,
+    //paddingHorizontal: 12,
+    marginVertical: 10,
+    marginHorizontal: 20,
+  },
+  buttonText: {
+    fontSize: 13,
+    color: "#fff",
+    fontFamily: 'Montserrat_400Regular',
+    alignSelf: "center",
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  },
   canvas: {
     //backgroundColor: 'black',
     //opacity: 0.5,
@@ -129,6 +186,7 @@ const styles = StyleSheet.create({
 //<StatusBar style="auto" />
 
 // REACT-NATIVE-CANVAS: https://www.atomlab.dev/tutorials/react-native-canvas
+// RE-SIZE & MOVE CIRCLES? https://blog.bitsrc.io/using-the-gesture-handler-in-react-native-c07f84ddfa49
 
 // CALLBACK?? https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780
 

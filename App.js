@@ -5,15 +5,39 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+
 import { Ionicons } from '@expo/vector-icons';
 
-import CreateBeta from "./components/CreateBeta";
-import ExploreScreen from "./components/ExploreScreen";
 import HomeScreen from "./components/HomeScreen";
+import CreateBeta from "./components/CreateBeta";
+import ModifyHolds from "./components/ModifyHolds";
+import ExploreScreen from "./components/ExploreScreen";
+
 
 
 export default function App() {
   const Tab = createBottomTabNavigator();
+  const BetaStack = createStackNavigator();
+
+
+  function BetaStackScreen() {
+    return (
+      <BetaStack.Navigator 
+        screenOptions={{
+          headerShown: false
+        }}>
+        <BetaStack.Screen
+          name="Create Beta"
+          component={CreateBeta}
+        />
+        <BetaStack.Screen
+          name="Modify Holds"
+          component={ModifyHolds}
+        />
+      </BetaStack.Navigator>
+    );
+  }
 
 	return (
 		<NavigationContainer>
@@ -67,7 +91,7 @@ export default function App() {
         />
         <Tab.Screen 
           name="Create Beta" 
-          component={CreateBeta} 
+          component={BetaStackScreen} 
         />
 				<Tab.Screen
 					name="Explore"
