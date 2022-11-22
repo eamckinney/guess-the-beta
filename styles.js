@@ -16,12 +16,33 @@ const styles = StyleSheet.create({
     fontSize: 50,
     marginBottom: 30,
   },
+  subHead: {
+    color: '#fff',
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 30,
+    marginHorizontal: 20,
+    marginTop: 30,
+  },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
     backgroundColor: "#2A9D8F",
     borderRadius: 10,
     paddingVertical: 6,
     paddingHorizontal: 12
+  },
+  buttonRow: {
+    fontFamily: 'Montserrat_200ExtraLight',
+    marginVertical: 10,
+    marginHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonStyle: {
+    marginHorizontal: 20, 
+    borderRadius: 10, 
+    paddingVertical: 10, 
+    paddingHorizontal: 50 
   },
   buttonText: {
     fontSize: 13,
@@ -32,10 +53,12 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   betaImage: {
-    marginTop: 20, 
+    flex: 1,
+    marginTop: 30, 
     width: '100%', 
-    height: '75%', 
-    alignSelf: 'center'
+    height: '100%', 
+    alignSelf: 'center',
+    resizeMode: 'cover',
   }
 })
 

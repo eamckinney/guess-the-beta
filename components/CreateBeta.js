@@ -3,13 +3,9 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ImageBackgroun
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import Canvas from 'react-native-canvas';
-//import { Canvas, Path, Circle } from "@shopify/react-native-skia";
+import { styles } from '../styles.js';
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null)
@@ -149,7 +145,7 @@ export default function CreateBeta() {
   
   return (
     <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.title}>Select your holds.</Text>
+      <Text style={styles.subHead}>Select your holds.</Text>
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>
         <ImageBackground source={{uri:image}} style={styles.betaImage}>
 
@@ -158,7 +154,7 @@ export default function CreateBeta() {
         
         </ImageBackground>
       </GestureDetector>
-      <View style={styles.buttonLayout}>
+      <View style={styles.buttonRow}>
         <TouchableOpacity 
           onPress={ () => undo() }
           style={ [styles.buttonStyle, { backgroundColor: "#203B44"}]}
@@ -177,60 +173,6 @@ export default function CreateBeta() {
   
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#264653',
-    
-    //alignItems: 'center',
-    //justifyContent: 'center',
-  },
-  title: {
-    color: '#fff',
-    fontFamily: 'Montserrat_200ExtraLight',
-    fontSize: 30,
-    marginHorizontal: 20,
-    marginTop: 30,
-  },
-  betaImage: {
-    flex: 1,
-    marginTop: 30, 
-    width: '100%', 
-    height: '100%', 
-    alignSelf: 'center',
-    resizeMode: 'cover',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-  },
-  buttonLayout: {
-    fontFamily: 'Montserrat_200ExtraLight',
-    marginVertical: 10,
-    marginHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonStyle: {
-    marginHorizontal: 20, 
-    borderRadius: 10, 
-    paddingVertical: 10, 
-    paddingHorizontal: 50 
-  },
-  buttonText: {
-    fontSize: 13,
-    color: "#fff",
-    fontFamily: 'Montserrat_400Regular',
-    alignSelf: "center",
-    textTransform: "uppercase",
-    letterSpacing: 2,
-  },
-  canvas: {
-    //backgroundColor: 'black',
-    //opacity: 0.5,
-    //alignSelf: 'center',
-    //justifyContent: 'center',
-  }
-});
 
 //{image && <Image source={{uri:image}} style={{flex:1,width:600}} />}
 //<StatusBar hidden={true} />
