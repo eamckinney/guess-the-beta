@@ -1,6 +1,7 @@
 import React ,{useState} from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 import { Canvas, Path, Circle } from "@shopify/react-native-skia";
+import { styles } from '../styles.js';
 
 export default function ExploreScreen() {
   
@@ -14,25 +15,3 @@ export default function ExploreScreen() {
   );
   
 }
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#264653',
-    //alignItems: 'center',
-    //justifyContent: 'center',
-    
-  },
-  container: {
-    marginHorizontal:20,
-    marginVertical:40,
-    marginTop: 80,
-  },
-  title: {
-    color: '#fff',
-    fontFamily: 'Montserrat_200ExtraLight',
-    fontSize: 50,
-    marginBottom: 30,
-  },
-  
-});
