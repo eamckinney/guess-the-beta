@@ -1,11 +1,12 @@
-import 'react-native-gesture-handler';
 import React, { useCallback, useEffect, useState } from 'react';
+import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-
 import * as SplashScreen from 'expo-splash-screen';
+
+import { styles } from '../styles.js';
 
 import Entypo from '@expo/vector-icons/Entypo';
 import * as Font from 'expo-font';
@@ -100,7 +101,7 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+/*const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#264653',
@@ -140,5 +141,5 @@ const styles = StyleSheet.create({
     height: '75%', 
     alignSelf: 'center'
   }
-});
+});*/
 
