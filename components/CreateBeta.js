@@ -187,3 +187,5 @@ export default function CreateBeta() {
 
 // https://medium.com/react-native-rocket/building-a-hand-drawing-app-with-react-native-skia-and-gesture-handler-9797f5f7b9b4
 // https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/tap-gesture
+
+// CSS Organization Method🤓 - https://freecontent.manning.com/applying-and-organizing-styles-in-react-native/
