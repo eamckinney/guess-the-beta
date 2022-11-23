@@ -59,7 +59,13 @@ const styles = StyleSheet.create({
     height: '100%', 
     alignSelf: 'center',
     resizeMode: 'cover',
-  }
+  },
+  circleShape: {
+    //width: 150,
+    //height: 150,
+    borderRadius: 150 / 2,
+    backgroundColor: '#FF9800',
+  },
 })
 
 

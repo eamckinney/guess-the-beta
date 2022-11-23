@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ImageBackground, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,9 @@ export default function CreateBeta() {
   const [image, setImage] = useState(null)
   
   const navigation = useNavigation();
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
+  const circleRadius = 50;
 
   const backToChallenges = () => navigation.navigate('Challenges')
   const modifyHolds = () => navigation.navigate('Modify Holds', {canvas: canvas, holds: holds, image: image});
@@ -150,7 +153,15 @@ export default function CreateBeta() {
         <ImageBackground source={{uri:image}} style={styles.betaImage}>
 
           <StatusBar hidden={true} />
-          <Canvas ref={canvas} style={styles.canvas} />
+          
+          <View style={[styles.circleShape, 
+            { 
+              transform: [{ translateX: (windowWidth - circleRadius) / 2}, {translateY: (windowHeight - circleRadius) / 2 }],
+              width: circleRadius,
+              height: circleRadius,
+            },
+            
+          ]}/>
         
         </ImageBackground>
       </GestureDetector>
@@ -173,9 +184,8 @@ export default function CreateBeta() {
   
 }
 
+//<Canvas ref={canvas} style={styles.canvas} />
 
-//{image && <Image source={{uri:image}} style={{flex:1,width:600}} />}
-//<StatusBar hidden={true} />
 //<StatusBar style="auto" />
 
 // REACT-NATIVE-CANVAS: https://www.atomlab.dev/tutorials/react-native-canvas
@@ -189,3 +199,4 @@ export default function CreateBeta() {
 // https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/tap-gesture
 
 // CSS Organization Method🤓 - https://freecontent.manning.com/applying-and-organizing-styles-in-react-native/
+
