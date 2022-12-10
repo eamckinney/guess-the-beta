@@ -23,43 +23,20 @@ export default function CreateBeta() {
   const canvas = useRef(null);
   
   const tap = Gesture.Tap()
-    .maxDistance(2)
+    .maxDistance(5)
     .onStart((g) => {
-      //console.log(`Tap at ${g.x} ${g.y}`);
-      const ctx = canvas.current.getContext('2d');
-
-      /*for (let i = 0; i < holds.length; i++) {
-        if (g.x >= (holds[i][0]-15) && g.x <= (holds[i][0]+15) && g.y >= (holds[i][1]-15) && g.y <= (holds[i][1]+15)) {
-          removeHold(holds[i][0],holds[i][1], ctx);
-          console.log("there's another hold there!");
-          return;
-        } else { continue; }
-      }*/
-
-      addHold(g.x, g.y, 30, ctx);
+      addHold(g.x, g.y, 30);
     });
 
-  const addHold = (x, y, r, ctx) => {
-    if (!ctx) { ctx = canvas.current.getContext('2d'); }
-
-    ctx.globalCompositeOperation = 'source-over'
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#E76F51';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    ctx.fillStyle = "rgba(0,0,0, 0.2)";
-    ctx.fill();
-    ctx.closePath();
+  const addHold = (x, y, r) => {
 
     setHolds([...holds, [x,y,r]]);
     console.log(`circle added at ${x} and ${y}`);
     console.log("holds.length: " + holds.length);
 
-    //console.log(`holds: ${holds}`);
   }
 
-  const removeHold = (x, y, r, ctx) => {
+  const removeHold = (x, y, r) => {
 
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath();
@@ -78,28 +55,29 @@ export default function CreateBeta() {
   }
 
   const undo = () => {
-    const ctx = canvas.current.getContext('2d');
-
-    ctx.globalCompositeOperation = 'destination-out'
-    ctx.beginPath();
-    ctx.arc(holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2], 0, 2 * Math.PI);
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    ctx.fillStyle = "rgba(0,0,0,1)";
-    ctx.fill();
-    ctx.closePath();
 
     console.log("hold to remove: " + holds[holds.length-1][0], holds[holds.length-1][1]);
-    holds.splice(holds.indexOf([holds[holds.length-1][0],holds[holds.length-1][1]]), 1);
+    setHolds((current) =>
+      current.slice(0,-1)
+    );
+
     console.log("holds: " + holds);
   }
 
   let pinchScale = 1;
-  const pinch = Gesture.Pinch().onUpdate((g) => {
+  let startPinchX = 0;
+  let startPinchY = 0;
+
+  const pinch = Gesture.Pinch()
+  .onStart((g) => {
+    startPinchX = g.focalX;
+    startPinchY = g.focalY;
+  }).onUpdate((g) => {
     //scale.value = savedScale.value * g.scale;
     console.log(`pinch! scale: ${g.scale}, coordinates: ${g.focalX}, ${g.focalY}`);
+    console.log(`radius? X: ${g.focalX - startPinchX}, Y: ${g.focalY - startPinchY}`);
     pinchScale = g.scale;
-
+    
   }).onEnd(() => {
     resizeHold(pinchScale);
   })
@@ -109,8 +87,10 @@ export default function CreateBeta() {
   const resizeHold = (scale) => {
     const currentHold = [holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2]];
 
-    undo();
-    addHold(currentHold[0], currentHold[1], (currentHold[2]*scale), null);
+    setHolds((current) =>
+      current.slice(0,-2)
+    );
+    addHold(currentHold[0], currentHold[1], (currentHold[2]*scale));
   }
   
   useEffect(() => {
@@ -128,43 +108,44 @@ export default function CreateBeta() {
     pickImage();
     //navigation.navigate('Challenges');
     console.log('image loaded!');
-    
-    
 
-    if (canvas.current) {
-      const ctx = canvas.current.getContext('2d');
-      
-      canvas.current.height = 915;
-      canvas.current.width = 412;
+  }, []);
 
-      if (ctx) {
-        console.log('Canvas is ready');
-      }
-    }
-
-  }, [canvas]);
+  useEffect(() => {
+    console.log('holds length: ', holds.length);
+  }, [holds]);
 
   
-  
+  const renderHolds = holds.map((hold, i) => {
+    console.log("renderHolds: ", hold)
+    return(
+      <View key={i} style={[styles.circleShape, 
+        { 
+          position: 'absolute',
+          left: hold[0],
+          top: hold[1],
+          width: hold[2],
+          height: hold[2],
+          borderRadius: hold[2] / 2,
+        },
+        
+      ]}/>
+    );
+
+  });
+
   return (
     <GestureHandlerRootView style={styles.screen}>
       <Text style={styles.subHead}>Select your holds.</Text>
+      
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>
-        <ImageBackground source={{uri:image}} style={styles.betaImage}>
+        <View style={{ height: windowHeight*.78, width: windowWidth }}>
+          {image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} />}
 
-          <StatusBar hidden={true} />
-          
-          <View style={[styles.circleShape, 
-            { 
-              transform: [{ translateX: (windowWidth - circleRadius) / 2}, {translateY: (windowHeight - circleRadius) / 2 }],
-              width: circleRadius,
-              height: circleRadius,
-            },
-            
-          ]}/>
-        
-        </ImageBackground>
+          {renderHolds}
+        </View>
       </GestureDetector>
+      
       <View style={styles.buttonRow}>
         <TouchableOpacity 
           onPress={ () => undo() }
