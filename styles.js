@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   circleShape: {
     //width: 150,
     //height: 150,
-    backgroundColor: '#FF9800',
+    backgroundColor: 'rgba(255, 152, 0, .5)',
   },
 })
 
