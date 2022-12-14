@@ -20,12 +20,15 @@ export default function CreateBeta() {
 
   const [holds, setHolds] = useState([]);
 
-  const canvas = useRef(null);
+  //const canvas = useRef(null);
+  let scaleVal  = new Animated.Value(1)
   
+
   const tap = Gesture.Tap()
     .maxDistance(5)
     .onStart((g) => {
-      addHold(g.x, g.y, 30);
+      addHold(g.x, g.y, (30*scaleVal._value));
+      console.log('scale:', scaleVal);
     });
 
   const addHold = (x, y, r) => {
@@ -46,7 +49,7 @@ export default function CreateBeta() {
     console.log("undo holds.length: " + holds.length);
   }
 
-  let pinchScale = 1;
+  /*let pinchScale = 1;
   let startPinchX = 0;
   let startPinchY = 0;
 
@@ -63,23 +66,23 @@ export default function CreateBeta() {
   }).onEnd(() => {
     resizeHold(pinchScale);
   })
+  
+  const resizeHold = (scale) => {
+    const p = [holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2]];
+    setHolds([...holds.slice(0,-1), [p[0], p[1], (p[2]*scale)]]);
+  }*/
 
-  let scale  = new Animated.Value(1)
+  
 
-  const handleGesture = Animated.event([{nativeEvent: {scale:scale}}], { useNativeDriver: true });
+  const handleGesture = Animated.event([{nativeEvent: {scale:scaleVal}}], { useNativeDriver: true });
 
   const _onGestureStateChange = (event) => {
     console.log(event.nativeEvent)
-    scale.setValue(event.nativeEvent.scale)
+    scaleVal.setValue(event.nativeEvent.scale)
   }
 
   const gestures = Gesture.Simultaneous(tap); //, pinch
 
-  const resizeHold = (scale) => {
-    const p = [holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2]];
-    setHolds([...holds.slice(0,-1), [p[0], p[1], (p[2]*scale)]]);
-  }
-  
   useEffect(() => {
     const pickImage = async () => {
       // No permissions request is necessary for launching the image library
@@ -98,9 +101,7 @@ export default function CreateBeta() {
 
   }, []);
 
-  /*useEffect(() => {
-    console.log('holds length: ', holds.length);
-  }, [holds]);*/
+
 
   
   const renderHolds = holds.map((hold, i) => {
@@ -116,7 +117,7 @@ export default function CreateBeta() {
           borderRadius: hold[2] / 2,
           transform:[
             { perspective: 200 },
-            { scale :  scale }
+            { scale :  scaleVal }
           ]
         },
         
@@ -134,7 +135,7 @@ export default function CreateBeta() {
     borderRadius: 100,
     transform:[
         { perspective: 200 },
-        { scale :  scale }
+        { scale :  scaleVal }
     ]}
 
   return (
