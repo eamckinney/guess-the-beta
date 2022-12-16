@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
-    marginVertical: 10,
+    marginVertical: 15,
     marginHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -61,7 +61,10 @@ const styles = StyleSheet.create({
   circleShape: {
     //width: 150,
     //height: 150,
-    backgroundColor: 'rgba(255, 152, 0, .5)',
+    backgroundColor: 'rgba(231, 111, 81, 0.2)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(231, 111, 81, 1)',
+
   },
 })
 
