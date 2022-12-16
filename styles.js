@@ -55,11 +55,14 @@ const styles = StyleSheet.create({
   betaImage: {
     flex: 1,
     marginTop: 30, 
-    width: '100%', 
-    height: '100%', 
     alignSelf: 'center',
     resizeMode: 'cover',
-  }
+  },
+  circleShape: {
+    //width: 150,
+    //height: 150,
+    backgroundColor: 'rgba(255, 152, 0, .5)',
+  },
 })
 
 
