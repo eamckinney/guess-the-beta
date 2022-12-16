@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
-    marginVertical: 10,
+    marginVertical: 15,
     marginHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',

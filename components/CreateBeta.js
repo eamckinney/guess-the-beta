@@ -4,31 +4,29 @@ import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler } from "react-native-gesture-handler";
-import Canvas from 'react-native-canvas';
 import { styles } from '../styles.js';
 
 export default function CreateBeta() {
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState(null);
+
   
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
-  const circleRadius = 50;
 
   const backToChallenges = () => navigation.navigate('Challenges')
   const modifyHolds = () => navigation.navigate('Modify Holds', {canvas: canvas, holds: holds, image: image});
 
   const [holds, setHolds] = useState([]);
+  const [circleRadius, setCircleRadius] = useState(30);
 
-  //const canvas = useRef(null);
   let scaleVal  = new Animated.Value(1)
   
 
   const tap = Gesture.Tap()
     .maxDistance(5)
     .onStart((g) => {
-      addHold(g.x, g.y, (30*scaleVal._value));
-      console.log('scale:', scaleVal);
+      addHold(g.x, g.y, 30);
     });
 
   const addHold = (x, y, r) => {
@@ -47,38 +45,23 @@ export default function CreateBeta() {
     );
 
     console.log("undo holds.length: " + holds.length);
-  }
-
-  /*let pinchScale = 1;
-  let startPinchX = 0;
-  let startPinchY = 0;
-
-  const pinch = Gesture.Pinch()
-  .onStart((g) => {
-    startPinchX = g.focalX;
-    startPinchY = g.focalY;
-  }).onUpdate((g) => {
-    //scale.value = savedScale.value * g.scale;
-    console.log(`pinch! scale: ${g.scale}, coordinates: ${g.focalX}, ${g.focalY}`);
-    console.log(`radius? X: ${g.focalX - startPinchX}, Y: ${g.focalY - startPinchY}`);
-    pinchScale = g.scale;
-    
-  }).onEnd(() => {
-    resizeHold(pinchScale);
-  })
-  
-  const resizeHold = (scale) => {
-    const p = [holds[holds.length-1][0], holds[holds.length-1][1], holds[holds.length-1][2]];
-    setHolds([...holds.slice(0,-1), [p[0], p[1], (p[2]*scale)]]);
-  }*/
-
-  
+  } 
 
   const handleGesture = Animated.event([{nativeEvent: {scale:scaleVal}}], { useNativeDriver: true });
 
   const _onGestureStateChange = (event) => {
-    console.log(event.nativeEvent)
-    scaleVal.setValue(event.nativeEvent.scale)
+    console.log("event.nativeEvent", event.nativeEvent);
+    scaleVal.setValue(event.nativeEvent.scale);
+    if (event.nativeEvent.scale != 1) {
+
+      let newHolds = [...holds];
+      newHolds[(newHolds.length-1)][2] = circleRadius * scaleVal._value;
+      setHolds(newHolds);
+
+      setCircleRadius((current) => {
+        return current*scaleVal._value;
+      });
+    }
   }
 
   const gestures = Gesture.Simultaneous(tap); //, pinch
@@ -105,16 +88,16 @@ export default function CreateBeta() {
 
   
   const renderHolds = holds.map((hold, i) => {
-    //console.log("renderHolds: ", hold)
+    
     return(
       <Animated.View key={i} style={[styles.circleShape, 
         { 
           position: 'absolute',
-          left: hold[0] - (hold[2] / 2),
-          top: hold[1]- (hold[2] / 2),
-          width: hold[2],
-          height: hold[2],
-          borderRadius: hold[2] / 2,
+          left: hold[0] - (circleRadius / 2),
+          top: hold[1] - (circleRadius / 2),
+          width: circleRadius,
+          height: circleRadius,
+          borderRadius: (circleRadius / 2),
           transform:[
             { perspective: 200 },
             { scale :  scaleVal }
@@ -126,31 +109,18 @@ export default function CreateBeta() {
 
   });
 
-  let scaleStyle = {
-    position: 'absolute',
-    left: 100,
-    top: 100,
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    transform:[
-        { perspective: 200 },
-        { scale :  scaleVal }
-    ]}
-
   return (
     <GestureHandlerRootView style={styles.screen}>
       <Text style={styles.subHead}>Select your holds.</Text>
+      <StatusBar hidden={true} />
       
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>
        <PinchGestureHandler onGestureEvent={handleGesture} onHandlerStateChange={_onGestureStateChange}>
-          <Animated.View style={{ height: windowHeight*.78, width: windowWidth }}>
+          <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
-            {image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} />}
-            
-          
-            {/* <Animated.View style={[styles.circleShape,scaleStyle]} />*/
-            renderHolds}
+            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
+            { renderHolds }
+
           </Animated.View>
 
         </PinchGestureHandler>
