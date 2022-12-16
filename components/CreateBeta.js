@@ -32,6 +32,7 @@ export default function CreateBeta() {
   const addHold = (x, y, r) => {
 
     setHolds([...holds, [x,y,r]]);
+    setCircleRadius(30);
     console.log(`circle added at ${x} and ${y}`);
     console.log("holds.length: " + holds.length);
 
@@ -88,24 +89,39 @@ export default function CreateBeta() {
 
   
   const renderHolds = holds.map((hold, i) => {
+    if (i < holds.length-1) {
+      return(
+        <Animated.View key={i} style={[styles.circleShape, 
+          { 
+            position: 'absolute',
+            left: hold[0] - (hold[2] / 2),
+            top: hold[1] - (hold[2] / 2),
+            width: hold[2],
+            height: hold[2],
+            borderRadius: (hold[2] / 2),
+          },
+        ]}/>
+      );
+    } else {
+      return(
+        <Animated.View key={i} style={[styles.circleShape, 
+          { 
+            position: 'absolute',
+            left: hold[0] - (hold[2] / 2),
+            top: hold[1] - (hold[2] / 2),
+            width: hold[2],
+            height: hold[2],
+            borderRadius: (hold[2] / 2),
+            transform:[
+              { perspective: 200 },
+              { scale :  scaleVal }
+            ]
+          },
+          
+        ]}/>
+      );
+    }
     
-    return(
-      <Animated.View key={i} style={[styles.circleShape, 
-        { 
-          position: 'absolute',
-          left: hold[0] - (circleRadius / 2),
-          top: hold[1] - (circleRadius / 2),
-          width: circleRadius,
-          height: circleRadius,
-          borderRadius: (circleRadius / 2),
-          transform:[
-            { perspective: 200 },
-            { scale :  scaleVal }
-          ]
-        },
-        
-      ]}/>
-    );
 
   });
 
