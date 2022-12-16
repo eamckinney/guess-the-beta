@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Loader from 'components/Loader.js';
 
 import { styles } from '../styles.js';
 
