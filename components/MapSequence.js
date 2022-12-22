@@ -16,6 +16,11 @@ export default function MapSequence({ route }) {
   const selectedBackground = 'rgba(255, 255, 255, 0.2)';
   const selectedBorder = 'rgba(255, 255, 255, 1.0)';
 
+  const startingPosition = ['Right Hand Start', 'Left Hand Start', 'Right Foot Start', 'Left Foot Start', 'All Done!'];
+  
+  const [seq, setSeq] = useState();
+  const [labelText, setLabelText] = useState();
+
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -26,7 +31,8 @@ export default function MapSequence({ route }) {
       newHolds[i].borderColor = standardBorder;
     }
     setHolds(newHolds);
-
+    setSeq(1);
+    setLabelText(startingPosition[0]);
 
   }, []);
 
@@ -36,23 +42,43 @@ export default function MapSequence({ route }) {
   const tap = Gesture.Tap()
     .maxDistance(5)
     .onStart((g) => {
-      let dist = new Array(holds.length);
-      let newHolds = [...holds];
+      if (seq < 5) {
+        let dist = new Array(holds.length);
+        let newHolds = [...holds];
 
-      for (let i = 0; i < holds.length; i++) {
-        dist[i] = Math.abs(holds[i].x - g.x) + Math.abs(holds[i].y - g.y)
+        for (let i = 0; i < holds.length; i++) {
+          dist[i] = Math.abs(holds[i].x - g.x) + Math.abs(holds[i].y - g.y)
+        }
+        
+        const min = Math.min(...dist);
+        const selected = dist.indexOf(min);
+        
+        newHolds[selected].backgroundColor = selectedBackground;
+        newHolds[selected].borderColor = selectedBorder;
+        setHolds(newHolds);
+        
+        setSeq(seq+1);
+        setLabelText(startingPosition[seq]);
+        console.log('seq: ', seq)
       }
-      
-      const min = Math.min(...dist);
-      const selected = dist.indexOf(min);
-      
-      newHolds[selected].backgroundColor = selectedBackground;
-      newHolds[selected].borderColor = selectedBorder;
-      setHolds(newHolds);
-
-
 
     });
+
+  // ******************************* //
+  // RESET BUTTON TO RESET STARTING POSITION //
+
+  const reset = () => {
+    
+    let newHolds = [...holds];
+    for (let i = 0; i < holds.length; i++) {
+      newHolds[i].backgroundColor = standardBackground;
+      newHolds[i].borderColor = standardBorder;
+    }
+    setHolds(newHolds);
+    setSeq(1);
+    setLabelText(startingPosition[0]);
+    
+  }
 
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
@@ -80,13 +106,23 @@ export default function MapSequence({ route }) {
       <StatusBar hidden={true} />
 
       <GestureDetector gesture={tap} style={{ flex: 1 }}>
-        <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
-          { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
+        <Animated.View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
+          { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> } 
+          <TouchableOpacity 
+            style={ [styles.label, { backgroundColor: "#2A9D8F"}] }>
+            <Text style={styles.buttonText}>{labelText}</Text>
+          </TouchableOpacity>       
           { renderHolds }
         </Animated.View>
       </GestureDetector>
 
       <View style={styles.buttonRow}>
+        <TouchableOpacity 
+          onPress={ () => reset() }
+          style={ [styles.buttonStyle, { backgroundColor: "#203B44"}]}
+          >
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity> 
         <TouchableOpacity 
           //onPress={ null }
           style={ [styles.buttonStyle, { backgroundColor: "#E76F51"}] }

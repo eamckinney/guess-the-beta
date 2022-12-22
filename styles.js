@@ -66,13 +66,20 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   circleShape: {
-    //width: 150,
-    //height: 150,
     backgroundColor: 'rgba(231, 111, 81, 0.2)',
     borderWidth: 1.5,
     borderColor: 'rgba(231, 111, 81, 1)',
-
   },
+  label: {
+    position: 'absolute',
+    marginHorizontal: 20, 
+    marginTop: 50,
+    borderRadius: 10, 
+    paddingVertical: 10,
+    paddingHorizontal: 50,
+    borderColor: "#FFFFFF",
+    borderWidth: 1,
+  }
 })
 
 
