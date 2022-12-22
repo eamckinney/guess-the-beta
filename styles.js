@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_400Regular',
     fontSize: 16,
     marginHorizontal: 20,
-    marginTop: 10,
+    marginTop: 20,
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
