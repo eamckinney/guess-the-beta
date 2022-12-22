@@ -22,8 +22,8 @@ export default function MapSequence({ route }) {
   useEffect(() => {
     let newHolds = [...holds];
     for (let i = 0; i < holds.length; i++) {
-      newHolds[i][3] = standardBackground;
-      newHolds[i][4] = standardBorder;
+      newHolds[i].backgroundColor = standardBackground;
+      newHolds[i].borderColor = standardBorder;
     }
     setHolds(newHolds);
 
@@ -40,21 +40,14 @@ export default function MapSequence({ route }) {
       let newHolds = [...holds];
 
       for (let i = 0; i < holds.length; i++) {
-        //dist[i] = new Array(2);
-        //dist[i][0] = Math.abs(holds[i][0] - g.x);
-        //dist[i][1] = Math.abs(holds[i][1] - g.y);
-        dist[i] = Math.abs(holds[i][0] - g.x) + Math.abs(holds[i][1] - g.y)
-        //newHolds[i][3] = standardBackground;
-        //newHolds[i][4] = standardBorder;
+        dist[i] = Math.abs(holds[i].x - g.x) + Math.abs(holds[i].y - g.y)
       }
-      console.log(dist);
+      
       const min = Math.min(...dist);
       const selected = dist.indexOf(min);
-      console.log(selected);
-
       
-      newHolds[selected][3] = selectedBackground;
-      newHolds[selected][4] = selectedBorder;
+      newHolds[selected].backgroundColor = selectedBackground;
+      newHolds[selected].borderColor = selectedBorder;
       setHolds(newHolds);
 
 
@@ -69,13 +62,13 @@ export default function MapSequence({ route }) {
       <Animated.View key={i} style={[styles.circleShape, 
         { 
           position: 'absolute',
-          left: hold[0] - (hold[2] / 2),
-          top: hold[1] - (hold[2] / 2),
-          width: hold[2],
-          height: hold[2],
-          borderRadius: (hold[2] / 2),
-          backgroundColor: hold[3],
-          borderColor: hold[4],
+          left: hold.x - (hold.radius / 2),
+          top: hold.y - (hold.radius / 2),
+          width: hold.radius,
+          height: hold.radius,
+          borderRadius: (hold.radius / 2),
+          backgroundColor: hold.backgroundColor,
+          borderColor: hold.borderColor,
         },
       ]}/>
     );

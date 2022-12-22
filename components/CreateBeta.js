@@ -30,7 +30,13 @@ export default function CreateBeta() {
 
   const addHold = (x, y, r) => {
 
-    setHolds([...holds, [x,y,r]]);
+    setHolds([...holds, 
+      {
+        x: x, 
+        y: y,
+        radius: r
+      }
+    ]);
     setCircleRadius(30);
     console.log(`circle added at ${x} and ${y}`);
     console.log("holds.length: " + holds.length);
@@ -42,7 +48,7 @@ export default function CreateBeta() {
 
   const undo = () => {
 
-    console.log("hold to remove: " + holds[holds.length-1][0], holds[holds.length-1][1]);
+    console.log("hold to remove: " + holds[holds.length-1].x, holds[holds.length-1].y);
     setHolds((current) =>
       current.slice(0,-1)
     );
@@ -64,7 +70,7 @@ export default function CreateBeta() {
       console.log(event.nativeEvent);
 
       let newHolds = [...holds];
-      newHolds[(newHolds.length-1)][2] = circleRadius * scaleVal._value;
+      newHolds[(newHolds.length-1)].radius = circleRadius * scaleVal._value;
       setHolds(newHolds);
 
       // sets new circleRadius so on next pinch, it doesn't start back over at 30
@@ -92,8 +98,8 @@ export default function CreateBeta() {
       positionY.setValue(e.translationY);
 
       let newHolds = [...holds];
-      newHolds[(newHolds.length-1)][0] = holds[holds.length-1][0] + e.translationX;
-      newHolds[(newHolds.length-1)][1] = holds[holds.length-1][1] + e.translationY;
+      newHolds[(newHolds.length-1)].x = holds[holds.length-1].x + e.translationX;
+      newHolds[(newHolds.length-1)].y = holds[holds.length-1].y + e.translationY;
       setHolds(newHolds);
     });
 
@@ -126,16 +132,17 @@ export default function CreateBeta() {
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
   const renderHolds = holds.map((hold, i) => {
+    console.log(holds);
     if (i < holds.length-1) {
       return(
         <Animated.View key={i} style={[styles.circleShape, 
           { 
             position: 'absolute',
-            left: hold[0] - (hold[2] / 2),
-            top: hold[1] - (hold[2] / 2),
-            width: hold[2],
-            height: hold[2],
-            borderRadius: (hold[2] / 2),
+            left: hold.x - (hold.radius / 2),
+            top: hold.y - (hold.radius / 2),
+            width: hold.radius,
+            height: hold.radius,
+            borderRadius: (hold.radius / 2),
           },
         ]}/>
       );
@@ -144,11 +151,11 @@ export default function CreateBeta() {
         <Animated.View key={i} style={[styles.circleShape, 
           { 
             position: 'absolute',
-            left: hold[0] - (hold[2] / 2),
-            top: hold[1] - (hold[2] / 2),
-            width: hold[2],
-            height: hold[2],
-            borderRadius: (hold[2] / 2),
+            left: hold.x - (hold.radius / 2),
+            top: hold.y - (hold.radius / 2),
+            width: hold.radius,
+            height: hold.radius,
+            borderRadius: (hold.radius / 2),
             transform:[
               { perspective: 200 },
               { scale :  scaleVal },
@@ -174,7 +181,7 @@ export default function CreateBeta() {
           <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
             { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
-            { renderHolds }
+            { holds.length > 0 && renderHolds }
 
           </Animated.View>
         </PinchGestureHandler>
