@@ -5,7 +5,7 @@ import Canvas from 'react-native-canvas';
 import { styles } from '../styles.js';
 
 
-export default function ModifyHolds({ route }) {
+export default function MapSequence({ route }) {
   const holds = route.params.holds;
 
   useEffect(() => {

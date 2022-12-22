@@ -23,8 +23,9 @@ export default function CreateBeta() {
   const [holds, setHolds] = useState([]);
   const [circleRadius, setCircleRadius] = useState(30);
 
-  let scaleVal  = new Animated.Value(1)
-  
+
+  // **************** //
+  // TAP TO ADD HOLDS //
 
   const tap = Gesture.Tap()
     .maxDistance(5)
@@ -41,6 +42,9 @@ export default function CreateBeta() {
 
   }
 
+  // ******************************* //
+  // UNDO BUTTON TO REMOVE LAST HOLD //
+
   const undo = () => {
 
     console.log("hold to remove: " + holds[holds.length-1][0], holds[holds.length-1][1]);
@@ -51,6 +55,11 @@ export default function CreateBeta() {
     console.log("undo holds.length: " + holds.length);
   }
 
+  // ******************* //
+  // PINCH TO SIZE HOLDS //
+
+  let scaleVal  = new Animated.Value(1)
+  
   const handlePinch = Animated.event([{nativeEvent: {scale:scaleVal}}], { useNativeDriver: true });
 
   const _onPinchStateChange = (event) => {
@@ -70,7 +79,34 @@ export default function CreateBeta() {
 
     }
   }
+  
+  // ******************************* //
+  // PAN TO ADJUST POSITION OF HOLDS //
 
+  let positionX = new Animated.Value(0);
+  let positionY = new Animated.Value(0);
+
+  const pan = Gesture.Pan()
+    .maxPointers(1)
+    .onUpdate((e) => {
+      positionX.setValue(e.translationX);
+      positionY.setValue(e.translationY);
+    })
+    .onEnd((e) => {
+      positionX.setValue(e.translationX);
+      positionY.setValue(e.translationY);
+
+      let newHolds = [...holds];
+      newHolds[(newHolds.length-1)][0] = holds[holds.length-1][0] + e.translationX;
+      newHolds[(newHolds.length-1)][1] = holds[holds.length-1][1] + e.translationY;
+      setHolds(newHolds);
+    });
+
+  // COMBINE TAP & PAN GESTURE FOR GESTURE DETECTOR
+  const gestures = Gesture.Simultaneous(tap, pan); 
+
+  // ************************************************ //
+  // useEffect TO LAUNCH IMAGE LIBRARY & CHOOSE IMAGE //
 
   useEffect(() => {
     const pickImage = async () => {
@@ -91,43 +127,8 @@ export default function CreateBeta() {
   }, []);
 
 
-  const END_POSITION = 200;
-  let onLeft = true;
-  let positionX = new Animated.Value(0);
-  let positionY = new Animated.Value(0);
-
-  const pan = Gesture.Pan()
-    .maxPointers(1)
-    .onUpdate((e) => {
-      positionX.setValue(e.translationX);
-      positionY.setValue(e.translationY);
-      /*if (onLeft) {
-        console.log(e);
-        position.setValue(e.translationX);
-      } else {
-        position.setValue(END_POSITION + e.translationX);
-      }*/
-    })
-    .onEnd((e) => {
-      positionX.setValue(e.translationX);
-      positionY.setValue(e.translationY);
-
-      let newHolds = [...holds];
-      newHolds[(newHolds.length-1)][0] = holds[holds.length-1][0] + e.translationX;
-      newHolds[(newHolds.length-1)][1] = holds[holds.length-1][1] + e.translationY;
-      setHolds(newHolds);
-
-      /*if (position > END_POSITION / 2) {
-        position.setValue(e.translationX);
-        onLeft = false;
-      } else {
-        position.setValue(e.translationX);
-        onLeft = true;
-      }*/
-    });
-
-  const gestures = Gesture.Simultaneous(tap, pan); 
-
+  // ******************************************* //
+  // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
   const renderHolds = holds.map((hold, i) => {
     if (i < holds.length-1) {
@@ -200,22 +201,6 @@ export default function CreateBeta() {
       </View>
     </GestureHandlerRootView>
   );
-  
 }
 
-//<Canvas ref={canvas} style={styles.canvas} />
-
-//<StatusBar style="auto" />
-
-// REACT-NATIVE-CANVAS: https://www.atomlab.dev/tutorials/react-native-canvas
-
-// RE-SIZE & MOVE CIRCLES? https://blog.bitsrc.io/using-the-gesture-handler-in-react-native-c07f84ddfa49
-// USE PINCH: https://docs.swmansion.com/react-native-gesture-handler/docs/2.0.0/api/gestures/pinch-gesture/
-
-// CALLBACK?? https://medium.com/@teh_builder/ref-objects-inside-useeffect-hooks-eb7c15198780
-
-// https://medium.com/react-native-rocket/building-a-hand-drawing-app-with-react-native-skia-and-gesture-handler-9797f5f7b9b4
-// https://docs.swmansion.com/react-native-gesture-handler/docs/api/gestures/tap-gesture
-
-// CSS Organization Method🤓 - https://freecontent.manning.com/applying-and-organizing-styles-in-react-native/
 
