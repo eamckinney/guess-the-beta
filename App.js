@@ -12,8 +12,8 @@ import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from "./components/HomeScreen";
 import CreateBeta from "./components/CreateBeta";
 import StartingHolds from "./components/StartingHolds";
+import MapSequence from "./components/MapSequence";
 import ExploreScreen from "./components/ExploreScreen";
-
 
 
 export default function App() {
@@ -34,6 +34,10 @@ export default function App() {
         <BetaStack.Screen
           name="Starting Holds"
           component={StartingHolds}
+        />
+         <BetaStack.Screen
+          name="Map Sequence"
+          component={MapSequence}
         />
       </BetaStack.Navigator>
     );

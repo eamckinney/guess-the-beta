@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Text, View, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import { styles } from '../styles.js';
@@ -9,6 +10,9 @@ export default function StartingHolds({ route }) {
   
   const [holds, setHolds] = useState(route.params.holds);
   const [image, setImage] = useState(route.params.image);
+
+  const navigation = useNavigation();
+  const mapSequence = () => navigation.navigate('Map Sequence', {holds: holds, image: image});
 
   const standardBackground = 'rgba(231, 111, 81, 0.2)';
   const standardBorder = 'rgba(231, 111, 81, 1.0)';
@@ -123,7 +127,7 @@ export default function StartingHolds({ route }) {
   
   return (
     <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.bodyText}>Now, select your starting hands and feet by tapping the holds.</Text>
+      <Text style={styles.bodyText}>Next, select your starting hands and feet by tapping the holds.</Text>
       <StatusBar hidden={true} />
 
       <GestureDetector gesture={tap} style={{ flex: 1 }}>
@@ -142,7 +146,7 @@ export default function StartingHolds({ route }) {
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity> 
         <TouchableOpacity 
-          //onPress={ null }
+          onPress={ () => mapSequence() }
           style={ [styles.buttonStyle, { backgroundColor: "#E76F51"}] }
           >
           <Text style={styles.buttonText}>Next</Text>
