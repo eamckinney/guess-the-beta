@@ -1,48 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import Canvas from 'react-native-canvas';
 import { styles } from '../styles.js';
 
 
 export default function MapSequence({ route }) {
-  const holds = route.params.holds;
+  
+  const [holds, setHolds] = useState(route.params.holds);
+  const [image, setImage] = useState(route.params.image);
+
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
 
-    if (route.params.canvas.current) {
-      const ctx = route.params.canvas.current.getContext('2d');
-      
-      route.params.canvas.current.height = 915;
-      route.params.canvas.current.width = 412;
+  }, []);
 
-      if (ctx) {
-        console.log('Canvas is ready');
-        for (let i = 0; i < holds.length; i++) {
-          ctx.beginPath();
-          ctx.arc(holds[i][0], holds[i][1], 30, 0, 2 * Math.PI);
-          ctx.closePath();
-          ctx.strokeStyle = '#E76F51';
-          ctx.lineWidth = 4;
-          ctx.stroke();
-          ctx.fillStyle = "rgba(0,0,0, 0.2)";
-          ctx.fill();
-        }
-        console.log('Holds added.')
-      }
-    }
-
-  }, [route.params.canvas]);
+  // ******************************************* //
+  // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
+  
+  const renderHolds = holds.map((hold, i) => {
+    return(
+      <Animated.View key={i} style={[styles.circleShape, 
+        { 
+          position: 'absolute',
+          left: hold[0] - (hold[2] / 2),
+          top: hold[1] - (hold[2] / 2),
+          width: hold[2],
+          height: hold[2],
+          borderRadius: (hold[2] / 2),
+        },
+      ]}/>
+    );
+  });
   
   return (
     <View style={styles.screen}>
-      <Text style={styles.subHead}>Modify.</Text>
-      <ImageBackground source={{uri:route.params.image}} style={styles.betaImage}>
-
-        <StatusBar hidden={true} />
-        <Canvas ref={route.params.canvas} style={styles.canvas} />
+      <Text style={styles.bodyText}>Next, select your starting hands and feet by tapping the holds.</Text>
       
-      </ImageBackground>
+      <StatusBar hidden={true} />
+      
+      <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
+        { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
+        { renderHolds }
+      </Animated.View>
+
       <View style={styles.buttonRow}>
         <TouchableOpacity 
           //onPress={ null }

@@ -23,6 +23,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 30,
   },
+  bodyText: {
+    color: '#fff',
+    fontFamily: 'Montserrat_400Regular',
+    fontSize: 16,
+    marginHorizontal: 20,
+    marginTop: 10,
+  },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
     backgroundColor: "#2A9D8F",

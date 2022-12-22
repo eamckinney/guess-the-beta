@@ -1,8 +1,5 @@
-import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
-
-//import { useSharedValue, withTiming } from 'react-native-reanimated';
-
+import React, { useEffect, useState } from 'react';
+import { Text, View, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -11,14 +8,12 @@ import { styles } from '../styles.js';
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null);
-
   
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
-  const backToChallenges = () => navigation.navigate('Challenges')
-  const modifyHolds = () => navigation.navigate('Modify Holds', {canvas: canvas, holds: holds, image: image});
+  const mapSequence = () => navigation.navigate('Map Sequence', {holds: holds, image: image});
 
   const [holds, setHolds] = useState([]);
   const [circleRadius, setCircleRadius] = useState(30);
@@ -193,7 +188,7 @@ export default function CreateBeta() {
           <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity> 
         <TouchableOpacity 
-          onPress={ () => modifyHolds() }
+          onPress={ () => mapSequence() }
           style={ [styles.buttonStyle, { backgroundColor: "#E76F51"}]}
           >
           <Text style={styles.buttonText}>Next</Text>
