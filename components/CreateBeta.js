@@ -1,9 +1,12 @@
 import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
+
+//import { useSharedValue, withTiming } from 'react-native-reanimated';
+
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler } from "react-native-gesture-handler";
+import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler, PanGestureHandler } from "react-native-gesture-handler";
 import { styles } from '../styles.js';
 
 export default function CreateBeta() {
@@ -46,26 +49,28 @@ export default function CreateBeta() {
     );
 
     console.log("undo holds.length: " + holds.length);
-  } 
+  }
 
-  const handleGesture = Animated.event([{nativeEvent: {scale:scaleVal}}], { useNativeDriver: true });
+  const handlePinch = Animated.event([{nativeEvent: {scale:scaleVal}}], { useNativeDriver: true });
 
-  const _onGestureStateChange = (event) => {
-    console.log("event.nativeEvent", event.nativeEvent);
+  const _onPinchStateChange = (event) => {
     scaleVal.setValue(event.nativeEvent.scale);
     if (event.nativeEvent.scale != 1) {
+
+      console.log(event.nativeEvent);
 
       let newHolds = [...holds];
       newHolds[(newHolds.length-1)][2] = circleRadius * scaleVal._value;
       setHolds(newHolds);
 
+      // sets new circleRadius so on next pinch, it doesn't start back over at 30
       setCircleRadius((current) => {
         return current*scaleVal._value;
       });
+
     }
   }
 
-  const gestures = Gesture.Simultaneous(tap); //, pinch
 
   useEffect(() => {
     const pickImage = async () => {
@@ -86,6 +91,42 @@ export default function CreateBeta() {
   }, []);
 
 
+  const END_POSITION = 200;
+  let onLeft = true;
+  let positionX = new Animated.Value(0);
+  let positionY = new Animated.Value(0);
+
+  const pan = Gesture.Pan()
+    .maxPointers(1)
+    .onUpdate((e) => {
+      positionX.setValue(e.translationX);
+      positionY.setValue(e.translationY);
+      /*if (onLeft) {
+        console.log(e);
+        position.setValue(e.translationX);
+      } else {
+        position.setValue(END_POSITION + e.translationX);
+      }*/
+    })
+    .onEnd((e) => {
+      positionX.setValue(e.translationX);
+      positionY.setValue(e.translationY);
+
+      let newHolds = [...holds];
+      newHolds[(newHolds.length-1)][0] = holds[holds.length-1][0] + e.translationX;
+      newHolds[(newHolds.length-1)][1] = holds[holds.length-1][1] + e.translationY;
+      setHolds(newHolds);
+
+      /*if (position > END_POSITION / 2) {
+        position.setValue(e.translationX);
+        onLeft = false;
+      } else {
+        position.setValue(e.translationX);
+        onLeft = true;
+      }*/
+    });
+
+  const gestures = Gesture.Simultaneous(tap, pan); 
 
   
   const renderHolds = holds.map((hold, i) => {
@@ -114,7 +155,9 @@ export default function CreateBeta() {
             borderRadius: (hold[2] / 2),
             transform:[
               { perspective: 200 },
-              { scale :  scaleVal }
+              { scale :  scaleVal },
+              { translateX: positionX },
+              { translateY: positionY }
             ]
           },
           
@@ -131,14 +174,13 @@ export default function CreateBeta() {
       <StatusBar hidden={true} />
       
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>
-       <PinchGestureHandler onGestureEvent={handleGesture} onHandlerStateChange={_onGestureStateChange}>
+        <PinchGestureHandler onGestureEvent={handlePinch} onHandlerStateChange={_onPinchStateChange}>
           <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
             { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
             { renderHolds }
 
           </Animated.View>
-
         </PinchGestureHandler>
       </GestureDetector>
       
