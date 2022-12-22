@@ -3,7 +3,7 @@ import { Text, View, Image, TouchableOpacity, Dimensions, Animated } from 'react
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler, PanGestureHandler } from "react-native-gesture-handler";
+import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler } from "react-native-gesture-handler";
 import { styles } from '../styles.js';
 
 export default function CreateBeta() {
