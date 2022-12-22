@@ -13,7 +13,7 @@ export default function CreateBeta() {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
-  const mapSequence = () => navigation.navigate('Map Sequence', {holds: holds, image: image});
+  const startingHolds = () => navigation.navigate('Starting Holds', {holds: holds, image: image});
 
   const [holds, setHolds] = useState([]);
   const [circleRadius, setCircleRadius] = useState(30);
@@ -195,7 +195,7 @@ export default function CreateBeta() {
           <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity> 
         <TouchableOpacity 
-          onPress={ () => mapSequence() }
+          onPress={ () => startingHolds() }
           style={ [styles.buttonStyle, { backgroundColor: "#E76F51"}]}
           >
           <Text style={styles.buttonText}>Next</Text>

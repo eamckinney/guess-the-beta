@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { styles } from '../styles.js';
 
 
-export default function MapSequence({ route }) {
+export default function StartingHolds({ route }) {
   
   const [holds, setHolds] = useState(route.params.holds);
   const [image, setImage] = useState(route.params.image);
