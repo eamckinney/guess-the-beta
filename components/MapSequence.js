@@ -17,7 +17,6 @@ export default function MapSequence({ route }) {
   const [path, setPath] = useState(examplePath);
   const [paths, setPaths] = useState([examplePath]);
 
-
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
@@ -26,10 +25,7 @@ export default function MapSequence({ route }) {
   }, []);
 
   // ******************************* //
-  // PAN TO ADJUST POSITION OF HOLDS //
-
-  //let positionX = new Animated.Value(0);
-  //let positionY = new Animated.Value(0);
+  // PAN TO CREATE PATHS IN BETWEEN HOLDS //
 
   const pan = Gesture.Pan()
     .maxPointers(1)
@@ -37,16 +33,9 @@ export default function MapSequence({ route }) {
       setPath([]);
     })
     .onUpdate((e) => {
-      //positionX.setValue(e.translationX);
-      //positionY.setValue(e.translationY);
-
       setPath([...path, {x: (e.x), y: (e.y)} ]);
-      
     })
     .onEnd((e) => {
-      //positionX.setValue(e.translationX);
-      //positionY.setValue(e.translationY);
-
       setPath([...path, {x: (e.x), y: (e.y)} ]);
       setPaths([...paths, path]);
       console.log(paths.length);
@@ -79,6 +68,17 @@ export default function MapSequence({ route }) {
 
 
 
+  // ******************************* //
+  // UNDO BUTTON TO REMOVE LAST PATH //
+
+  const undo = () => {
+    setPaths((current) =>
+      current.slice(0,-1)
+    );
+    setPath([]);
+  }
+
+
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
@@ -109,28 +109,29 @@ export default function MapSequence({ route }) {
       <Text style={styles.bodyText}>Now, draw lines between holds to create your beta.</Text>
       <StatusBar hidden={true} />
       <GestureDetector gesture={pan} style={{ flex: 1 }}>
-
-        
-         
-          <Animated.View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', zIndex: -1  }}>
-            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth, zIndex: -1 }]} /> } 
-            { renderHolds }
-            <Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight*.77}`}>
-              <InProcessPath />
-              { GesturePaths }
-            </Svg>
-          </Animated.View>
-
-        
-      </GestureDetector>
       
+        <View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center' }}>
+
+          <View>
+            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> } 
+            { renderHolds }  
+          </View>
+
+          <Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight*.77}`} style={{position: "absolute" ,top: 0, zIndex: 1}}>
+            <InProcessPath />
+            { GesturePaths }
+          </Svg>
+
+        </View>
+
+      </GestureDetector>
 
       <View style={styles.buttonRow}>
         <TouchableOpacity 
-          //onPress={ () => reset() }
+          onPress={ () => undo() }
           style={ [styles.buttonStyle, { backgroundColor: "#203B44"}]}
           >
-          <Text style={styles.buttonText}>Reset</Text>
+          <Text style={styles.buttonText}>Undo</Text>
         </TouchableOpacity> 
         <TouchableOpacity 
           //onPress={ null }
