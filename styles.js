@@ -79,7 +79,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderColor: "#FFFFFF",
     borderWidth: 1,
-  }
+  },
+  
 })
 
 
