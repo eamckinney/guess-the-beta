@@ -5,10 +5,8 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Loader from 'components/Loader.js';
-
+import * as loading from './Loader.js';
 import { styles } from '../styles.js';
-
 import Entypo from '@expo/vector-icons/Entypo';
 import * as Font from 'expo-font';
 import { useFonts, Montserrat_200ExtraLight, Montserrat_400Regular} from '@expo-google-fonts/montserrat';

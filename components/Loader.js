@@ -1,29 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text} from 'react-native';
+import LottieView from 'lottie-react-native';
 import AnimatedLoader from 'react-native-animated-loader';
 
-export default function Loader() {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    setInterval(() => {
-      setVisible(!visible);
-    }, 2000);
-  }, []);
-
+const loading = () => {
   return (
-    <AnimatedLoader
-      visible={visible}
-      overlayColor="rgba(255,255,255,0.75)"
-      animationStyle={styles.lottie}
-      speed={1}>
-      <Text>Doing something...</Text>
-    </AnimatedLoader>
+      <View
+          style={{
+              flex: 1,
+              backgroundColor: '#ffffff',
+          }}
+      >
+          <LottieView
+              source={require('../assets/97930-loading.json')}
+              autoPlay
+              loop={true}
+              speed={1}
+          />
+      </View>
   );
-}
-const styles = StyleSheet.create({
-  lottie: {
-    width: 100,
-    height: 100,
-  },
-});
+};
+
+export default loading;

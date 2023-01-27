@@ -13,6 +13,8 @@ import HomeScreen from "./components/HomeScreen";
 import CreateBeta from "./components/CreateBeta";
 import ModifyHolds from "./components/ModifyHolds";
 import ExploreScreen from "./components/ExploreScreen";
+import {SafeAreaView} from 'react-native';
+import LottieView from 'lottie-react-native';
 
 
 
@@ -40,8 +42,8 @@ export default function App() {
   }
 
 	return (
-		<NavigationContainer>
-			<Tab.Navigator
+		<><NavigationContainer>
+      <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Challenges') {
@@ -49,24 +51,21 @@ export default function App() {
                 <Ionicons
                   name={focused ? 'flame' : 'flame'}
                   size={size}
-                  color={color}
-                />
+                  color={color} />
               );
             } else if (route.name === 'Explore') {
               return (
                 <Ionicons
                   name={focused ? 'rocket' : 'rocket'}
                   size={size}
-                  color={color}
-                />
+                  color={color} />
               );
             } else if (route.name === 'Create Beta') {
               return (
                 <Ionicons
                   name={focused ? 'add-circle' : 'add'}
                   size={size}
-                  color={color}
-                />
+                  color={color} />
               );
             }
           },
@@ -83,25 +82,33 @@ export default function App() {
           },
         }}
       >
-				
-        
-        <Tab.Screen 
-          name="Challenges" 
-          component={HomeScreen} 
+
+
+        <Tab.Screen
+          name="Challenges"
+          component={HomeScreen} />
+        <Tab.Screen
+          name="Create Beta"
+          component={BetaStackScreen} />
+        <Tab.Screen
+          name="Explore"
+          component={ExploreScreen}
+          options={{
+            title: "Explore",
+          }} />
+      </Tab.Navigator>
+    </NavigationContainer>
+    
+    <SafeAreaView>
+        <Text>Lottie View Animation</Text>
+        <View style={{height: 400, width: 400}}>
+        <LottieView
+          progress={progress}
+          source={require('./assets/97930-loading.json')}
         />
-        <Tab.Screen 
-          name="Create Beta" 
-          component={BetaStackScreen} 
-        />
-				<Tab.Screen
-					name="Explore"
-					component={ExploreScreen}
-					options={{
-						title: "Explore",
-					}}
-				/>
-			</Tab.Navigator>
-		</NavigationContainer>
+      </View>
+      </SafeAreaView></>
+
 	);
 }
 
