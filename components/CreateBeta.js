@@ -180,7 +180,7 @@ export default function CreateBeta() {
         <PinchGestureHandler onGestureEvent={handlePinch} onHandlerStateChange={_onPinchStateChange}>
           <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
-            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }          
+            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }
             { holds.length > 0 && renderHolds }
 
           </Animated.View>
