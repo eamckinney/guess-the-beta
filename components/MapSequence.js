@@ -13,6 +13,7 @@ export default function MapSequence({ route }) {
 
 	const [path, setPath] = useState(examplePath);
 	const [paths, setPaths] = useState([examplePath]);
+	const [moves, setMoves] = useState(examplePath);
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -48,6 +49,13 @@ export default function MapSequence({ route }) {
 			setPath([{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]);
 			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]]);
 
+			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
+			if (slope > 0) {
+				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
+			} else {
+				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
+			}
+
 		});
 
 	const InProcessPath = () => {
@@ -68,6 +76,31 @@ export default function MapSequence({ route }) {
 				strokeWidth="1"
 			/>
 		);
+	});
+
+	const MoveNumbers = moves.map((move, i) => {
+		if (i == 0) { return }
+		else {
+			return (
+				<Animated.View
+					key={i}
+					style={[
+						{
+							position: "absolute",
+							left: move.x,
+							top: move.y,
+							width: 20,
+							height: 20,
+							alignItems: "center",
+							justifyContent: "center",
+						},
+					]}
+				>
+					<Text style={{color: 'white'}}>{i}</Text>
+				</Animated.View>
+			);
+		}
+		
 	});
 
 	// ******************************* //
@@ -117,6 +150,7 @@ export default function MapSequence({ route }) {
 					<View>
 						{image && (<Image source={{ uri: image }} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]}/>)}
 						{renderHolds}
+						{MoveNumbers}
 					</View>
 
 					<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
