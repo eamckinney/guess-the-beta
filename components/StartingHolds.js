@@ -4,6 +4,8 @@ import { Text, View, Image, TouchableOpacity, Animated, Dimensions } from 'react
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import { styles } from '../styles.js';
+import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
+import Svg from "react-native-svg"
 
 
 export default function StartingHolds({ route }) {
@@ -106,7 +108,13 @@ export default function StartingHolds({ route }) {
           justifyContent: 'center',
         },
       ]}>
-        <Text>{hold.start}</Text>
+        <Svg height="80%" width="80%">
+        { hold.start == 'Right Hand Start' ? <RightHand/> : null }
+        { hold.start == 'Left Hand Start' ? <LeftHand/> : null }
+        { hold.start == 'Right Foot Start' ? <RightFoot/> : null }
+        { hold.start == 'Left Foot Start' ? <LeftFoot/> : null }
+        </Svg>
+        
       </Animated.View>
       
     );

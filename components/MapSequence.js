@@ -4,6 +4,8 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-g
 import { StatusBar } from "expo-status-bar";
 import { styles } from "../styles.js";
 import Svg, { Polyline } from "react-native-svg";
+import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
+
 
 export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
@@ -135,7 +137,12 @@ export default function MapSequence({ route }) {
 					},
 				]}
 			>
-				<Text>{hold.start}</Text>
+				<Svg height="80%" width="80%">
+        { hold.start == 'Right Hand Start' ? <RightHand/> : null }
+        { hold.start == 'Left Hand Start' ? <LeftHand/> : null }
+        { hold.start == 'Right Foot Start' ? <RightFoot/> : null }
+        { hold.start == 'Left Foot Start' ? <LeftFoot/> : null }
+        </Svg>
 			</Animated.View>
 		);
 	});
