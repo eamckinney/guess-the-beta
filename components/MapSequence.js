@@ -108,6 +108,7 @@ export default function MapSequence({ route }) {
 
 	const undo = () => {
 		setPaths((current) => current.slice(0, -1));
+		setMoves((current) => current.slice(0, -1));
 		setPath([]);
 	};
 
