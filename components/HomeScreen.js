@@ -81,20 +81,44 @@ export default function HomeScreen() {
     <View
       style={styles.screen}
       onLayout={onLayoutRootView}>
-        <View style={styles.container}>
+      <View style={styles.container}>
 
           <Text style={styles.title}>Welcome.</Text>
 
+
+        <View style={styles.buttonRowSpacer}>
           <View style={styles.buttonLayout}>
             <TouchableOpacity 
-              onPress={ () => createBeta() }
+              //onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
-              <Text style={styles.buttonText}>Add some betas</Text>
-            </TouchableOpacity> 
+              <Text style={styles.buttonText}></Text>
+            </TouchableOpacity>  
           </View>
 
-        </View>
+          <View style={styles.buttonLayout}>
+            <TouchableOpacity 
+              //onPress={ () => createBeta() }
+              style={styles.buttonLayout}
+              >
+              <Text style={styles.buttonText}></Text>
+            </TouchableOpacity>  
+          </View>
+
+          <View style={styles.buttonLayout}>
+            <TouchableOpacity 
+              //onPress={ () => createBeta() }
+              style={styles.buttonLayout}
+              >
+              <Text style={styles.buttonText}></Text>
+            </TouchableOpacity>  
+          </View>
+
+          </View>
+          
+          
+
+      </View>
     </View>
   );
 }

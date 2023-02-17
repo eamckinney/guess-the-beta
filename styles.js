@@ -23,24 +23,33 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 30,
   },
+  buttonRowSpacer: {
+    
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    height: 'auto',
+    paddingHorizontal: 0,
+
+  },
   bodyText: {
     color: '#fff',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 16,
-    marginHorizontal: 20,
-    marginTop: 20,
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
-    backgroundColor: "#2A9D8F",
-    borderRadius: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 12
+    backgroundColor: "#ffffff",
+    opacity: 0.12,
+    borderRadius: 3,
+    height: 80,
+    width: 80,
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
     marginVertical: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -49,7 +58,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20, 
     borderRadius: 10, 
     paddingVertical: 10, 
-    paddingHorizontal: 50 
+    paddingHorizontal: 50,
   },
   buttonText: {
     fontSize: 13,
