@@ -48,6 +48,12 @@ export default function MapSequence({ route }) {
 			const firstHold = holds[firstHoldIndex]
 			const lastHold = holds[lastHoldIndex]
 
+			let newHolds = [...holds];
+			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
+			newHolds[firstHoldIndex].appendage = '';
+			setHolds(newHolds);
+			
+
 			setPath([{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]);
 			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]]);
 
@@ -138,10 +144,10 @@ export default function MapSequence({ route }) {
 				]}
 			>
 				<Svg height="80%" width="80%">
-        { hold.start == 'Right Hand Start' ? <RightHand/> : null }
-        { hold.start == 'Left Hand Start' ? <LeftHand/> : null }
-        { hold.start == 'Right Foot Start' ? <RightFoot/> : null }
-        { hold.start == 'Left Foot Start' ? <LeftFoot/> : null }
+        { hold.appendage == 'Right Hand' ? <RightHand/> : null }
+        { hold.appendage == 'Left Hand' ? <LeftHand/> : null }
+        { hold.appendage == 'Right Foot' ? <RightFoot/> : null }
+        { hold.appendage == 'Left Foot' ? <LeftFoot/> : null }
         </Svg>
 			</Animated.View>
 		);

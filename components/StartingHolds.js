@@ -22,7 +22,7 @@ export default function StartingHolds({ route }) {
   const selectedBackground = 'rgba(255, 255, 255, 0.2)';
   const selectedBorder = 'rgba(255, 255, 255, 1.0)';
 
-  const startingPosition = ['Right Hand Start', 'Left Hand Start', 'Right Foot Start', 'Left Foot Start'];
+  const startingPosition = ['Right Hand', 'Left Hand', 'Right Foot', 'Left Foot'];
   
   const [seq, setSeq] = useState();
   const [labelText, setLabelText] = useState();
@@ -61,7 +61,7 @@ export default function StartingHolds({ route }) {
         
         newHolds[selected].backgroundColor = selectedBackground;
         newHolds[selected].borderColor = selectedBorder;
-        newHolds[selected].start = startingPosition[seq-1];
+        newHolds[selected].appendage = startingPosition[seq-1];
         setHolds(newHolds);
         
         setSeq(seq+1);
@@ -81,7 +81,7 @@ export default function StartingHolds({ route }) {
     for (let i = 0; i < holds.length; i++) {
       newHolds[i].backgroundColor = standardBackground;
       newHolds[i].borderColor = standardBorder;
-      newHolds[i].start = '';
+      newHolds[i].appendage = '';
     }
     setHolds(newHolds);
     setSeq(1);
@@ -109,10 +109,10 @@ export default function StartingHolds({ route }) {
         },
       ]}>
         <Svg height="80%" width="80%">
-        { hold.start == 'Right Hand Start' ? <RightHand/> : null }
-        { hold.start == 'Left Hand Start' ? <LeftHand/> : null }
-        { hold.start == 'Right Foot Start' ? <RightFoot/> : null }
-        { hold.start == 'Left Foot Start' ? <LeftFoot/> : null }
+        { hold.appendage == 'Right Hand' ? <RightHand/> : null }
+        { hold.appendage == 'Left Hand' ? <LeftHand/> : null }
+        { hold.appendage == 'Right Foot' ? <RightFoot/> : null }
+        { hold.appendage == 'Left Foot' ? <LeftFoot/> : null }
         </Svg>
         
       </Animated.View>
