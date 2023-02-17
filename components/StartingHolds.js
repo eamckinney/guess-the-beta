@@ -109,10 +109,10 @@ export default function StartingHolds({ route }) {
         },
       ]}>
         <Svg height="80%" width="80%">
-        { hold.appendage.includes('Right Hand') ? <RightHand/> : null }
-        { hold.appendage.includes('Left Hand') ? <LeftHand/> : null }
-        { hold.appendage.includes('Right Foot') ? <RightFoot/> : null }
-        { hold.appendage.includes('Left Foot') ? <LeftFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
         </Svg>
         
       </Animated.View>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
@@ -19,6 +20,9 @@ export default function MapSequence({ route }) {
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
+
+	const navigation = useNavigation();
+	const runBeta = () => navigation.navigate('Run Beta', {holds: holds, image: image, paths: paths, moves: moves});
 
 	useEffect(() => {}, []);
 
@@ -48,13 +52,8 @@ export default function MapSequence({ route }) {
 			const firstHold = holds[firstHoldIndex]
 			const lastHold = holds[lastHoldIndex]
 
-			let newHolds = [...holds];
-			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
-			newHolds[firstHoldIndex].appendage = [];
-			setHolds(newHolds);
-			
-
 			setPath([{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]);
+			// USE PATHS TO RUN BETA??
 			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]]);
 
 			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
@@ -63,6 +62,18 @@ export default function MapSequence({ route }) {
 			} else {
 				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
 			}
+
+			let newHolds = [...holds];
+			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
+			if (newHolds[lastHoldIndex].seq) {
+				newHolds[lastHoldIndex].seq = [...newHolds[lastHoldIndex].seq, { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } }];
+			} else {
+				newHolds[lastHoldIndex].seq = [ { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } } ];
+			}
+			
+			newHolds[firstHoldIndex].appendage = [];
+			setHolds(newHolds);
+			console.log(holds);
 
 		});
 
@@ -144,10 +155,10 @@ export default function MapSequence({ route }) {
 				]}
 			>
 				<Svg height="80%" width="80%">
-				{ hold.appendage.includes('Right Hand') ? <RightHand/> : null }
-        { hold.appendage.includes('Left Hand') ? <LeftHand/> : null }
-        { hold.appendage.includes('Right Foot') ? <RightFoot/> : null }
-        { hold.appendage.includes('Left Foot') ? <LeftFoot/> : null }
+				{ (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
         </Svg>
 			</Animated.View>
 		);
@@ -182,10 +193,10 @@ export default function MapSequence({ route }) {
 					<Text style={styles.buttonText}>Undo</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					//onPress={ null }
+					onPress={() => runBeta()}
 					style={[styles.buttonStyle, { backgroundColor: "#E76F51" }]}
 				>
-					<Text style={styles.buttonText}>Next</Text>
+					<Text style={styles.buttonText}>Run!</Text>
 				</TouchableOpacity>
 			</View>
 		</GestureHandlerRootView>
