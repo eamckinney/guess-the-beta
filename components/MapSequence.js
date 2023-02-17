@@ -13,6 +13,7 @@ export default function MapSequence({ route }) {
 
 	const [path, setPath] = useState(examplePath);
 	const [paths, setPaths] = useState([examplePath]);
+	const [moves, setMoves] = useState(examplePath);
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -31,9 +32,30 @@ export default function MapSequence({ route }) {
 			setPath([...path, { x: e.x, y: e.y }]);
 		})
 		.onEnd((e) => {
-			setPath([...path, { x: e.x, y: e.y }]);
-			setPaths([...paths, path]);
-			console.log(paths.length);
+	
+			let firstHoldDistance = [];
+			let lastHoldDistance = [];
+			for (let i = 0; i < holds.length; i++) {
+				firstHoldDistance[i] = Math.abs(path[0].x - holds[i].x) + Math.abs((path[0].y) - holds[i].y);
+				lastHoldDistance[i] = Math.abs(path[path.length-1].x - holds[i].x) + Math.abs((path[path.length-1].y) - holds[i].y);
+			}
+
+			const firstHoldIndex = firstHoldDistance.indexOf(Math.min(...firstHoldDistance));
+			const lastHoldIndex = lastHoldDistance.indexOf(Math.min(...lastHoldDistance));
+
+			const firstHold = holds[firstHoldIndex]
+			const lastHold = holds[lastHoldIndex]
+
+			setPath([{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]);
+			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]]);
+
+			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
+			if (slope > 0) {
+				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
+			} else {
+				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
+			}
+
 		});
 
 	const InProcessPath = () => {
@@ -43,8 +65,8 @@ export default function MapSequence({ route }) {
 		);
 	};
 
-	const GesturePaths = paths.map((path, i) => {
-		const points = path ? path.map((p) => `${p.x},${p.y}`).join(" ") : "";
+	const GesturePaths = paths.map((line, i) => {
+		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
 		return (
 			<Polyline
 				key={i}
@@ -54,6 +76,31 @@ export default function MapSequence({ route }) {
 				strokeWidth="1"
 			/>
 		);
+	});
+
+	const MoveNumbers = moves.map((move, i) => {
+		if (i == 0) { return }
+		else {
+			return (
+				<Animated.View
+					key={i}
+					style={[
+						{
+							position: "absolute",
+							left: move.x,
+							top: move.y,
+							width: 20,
+							height: 20,
+							alignItems: "center",
+							justifyContent: "center",
+						},
+					]}
+				>
+					<Text style={{color: 'white'}}>{i}</Text>
+				</Animated.View>
+			);
+		}
+		
 	});
 
 	// ******************************* //
@@ -99,32 +146,14 @@ export default function MapSequence({ route }) {
 			</Text>
 			<StatusBar hidden={true} />
 			<GestureDetector gesture={pan} style={{ flex: 1 }}>
-				<View
-					style={{
-						height: windowHeight * 0.77,
-						width: windowWidth,
-						alignItems: "center",
-					}}
-				>
+				<View style={{ height: windowHeight * 0.77, width: windowWidth, alignItems: "center"}} >
 					<View>
-						{image && (
-							<Image
-								source={{ uri: image }}
-								style={[
-									styles.betaImage,
-									{ height: windowHeight, width: windowWidth },
-								]}
-							/>
-						)}
+						{image && (<Image source={{ uri: image }} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]}/>)}
 						{renderHolds}
+						{MoveNumbers}
 					</View>
 
-					<Svg
-						height="100%"
-						width="100%"
-						viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`}
-						style={{ position: "absolute", top: 0, zIndex: 1 }}
-					>
+					<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
 						<InProcessPath />
 						{GesturePaths}
 					</Svg>
