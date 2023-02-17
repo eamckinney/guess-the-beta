@@ -61,7 +61,7 @@ export default function StartingHolds({ route }) {
         
         newHolds[selected].backgroundColor = selectedBackground;
         newHolds[selected].borderColor = selectedBorder;
-        newHolds[selected].appendage = startingPosition[seq-1];
+        newHolds[selected].appendage = [startingPosition[seq-1]];
         setHolds(newHolds);
         
         setSeq(seq+1);
@@ -81,7 +81,7 @@ export default function StartingHolds({ route }) {
     for (let i = 0; i < holds.length; i++) {
       newHolds[i].backgroundColor = standardBackground;
       newHolds[i].borderColor = standardBorder;
-      newHolds[i].appendage = '';
+      newHolds[i].appendage = [];
     }
     setHolds(newHolds);
     setSeq(1);
@@ -109,10 +109,10 @@ export default function StartingHolds({ route }) {
         },
       ]}>
         <Svg height="80%" width="80%">
-        { hold.appendage == 'Right Hand' ? <RightHand/> : null }
-        { hold.appendage == 'Left Hand' ? <LeftHand/> : null }
-        { hold.appendage == 'Right Foot' ? <RightFoot/> : null }
-        { hold.appendage == 'Left Foot' ? <LeftFoot/> : null }
+        { hold.appendage.includes('Right Hand') ? <RightHand/> : null }
+        { hold.appendage.includes('Left Hand') ? <LeftHand/> : null }
+        { hold.appendage.includes('Right Foot') ? <RightFoot/> : null }
+        { hold.appendage.includes('Left Foot') ? <LeftFoot/> : null }
         </Svg>
         
       </Animated.View>
