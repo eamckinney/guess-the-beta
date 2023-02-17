@@ -84,7 +84,11 @@ export default function HomeScreen() {
       <View style={styles.container}>
 
           <Text style={styles.title}>Welcome.</Text>
+       <View style={styles.textBeforeWelcomeButtons}  >
 
+       <Text style={styles.TextForChallenges}>Your Beta Challenges</Text>
+
+       </View>
 
         <View style={styles.buttonRowSpacer}>
           <View style={styles.buttonLayout}>

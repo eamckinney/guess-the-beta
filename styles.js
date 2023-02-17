@@ -23,6 +23,21 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 30,
   },
+
+  TextForChallenges: {
+
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 15,
+    color: '#fff',
+
+  },
+
+  textBeforeWelcomeButtons: {
+    width: '100%',
+    height: 105,
+
+  },
+
   buttonRowSpacer: {
     
     display: 'flex',
