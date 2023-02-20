@@ -12,7 +12,7 @@ export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
 
-	const examplePath = [{ x: 0, y: 0 }];
+	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 
 	const [path, setPath] = useState(examplePath);
 	const [paths, setPaths] = useState([examplePath]);
@@ -52,9 +52,10 @@ export default function MapSequence({ route }) {
 			const firstHold = holds[firstHoldIndex]
 			const lastHold = holds[lastHoldIndex]
 
-			setPath([{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]);
+			setPath([{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]);
 			// USE PATHS TO RUN BETA??
-			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y }, { x: lastHold.x, y: lastHold.y }]]);
+			// ADD APPENDAGE TO PATHS?
+			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
 
 			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
 			if (slope > 0) {

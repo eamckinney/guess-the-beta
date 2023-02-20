@@ -16,20 +16,29 @@ export default function MapSequence({ route }) {
 	const windowHeight = Dimensions.get("window").height;
 
   //USE PATHS VARIABLE TO DETERMINE COORDINATES??
-  const initialMove = useRef(new Animated.Value(0)).current;
-  const endMove = 100;
-  const duration = 3000;
+  const initialMoveX = useRef(new Animated.Value(0)).current;
+	const initialMoveY = useRef(new Animated.Value(0)).current;
+  const endMoveX = 10;
+	const endMoveY = 10;
+  const duration = 2000;
 
 
 	useEffect(() => {
     Animated.sequence([
-      Animated.timing(initialMove, {
-        toValue: endMove,
-        duration: duration,
-        useNativeDriver: true,
-      }),
+      Animated.parallel([
+				Animated.timing(initialMoveX, {
+					toValue: endMoveX,
+					duration: duration,
+					useNativeDriver: true,
+				}),
+				Animated.timing(initialMoveY, {
+					toValue: endMoveY,
+					duration: duration,
+					useNativeDriver: true,
+				}),
+			]),
     ]).start();
-  }, [initialMove]);
+  }, [initialMoveX, initialMoveY]);
 
 	const GesturePaths = paths.map((line, i) => {
 		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
@@ -92,7 +101,7 @@ export default function MapSequence({ route }) {
 					},
 				]}
 			>
-        <Animated.View>
+        <Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialMoveX, translateY: initialMoveY }}>
           <Svg height="80%" width="80%">
           { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
           { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
@@ -125,6 +134,8 @@ export default function MapSequence({ route }) {
 
         <Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
           {GesturePaths}
+					{console.log("paths:", paths)}
+
         </Svg>
       </View>
 
@@ -133,13 +144,13 @@ export default function MapSequence({ route }) {
 					//onPress={() => undo()}
 					style={[styles.buttonStyle, { backgroundColor: "#203B44" }]}
 				>
-					<Text style={styles.buttonText}>Undo</Text>
+					<Text style={styles.buttonText}>Edit</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					//onPress={() => runBeta()}
-					style={[styles.buttonStyle, { backgroundColor: "#E76F51" }]}
+					style={[styles.buttonStyle, { backgroundColor: "#2A9D8F" }]}
 				>
-					<Text style={styles.buttonText}>Run!</Text>
+					<Text style={styles.buttonText}>Save</Text>
 				</TouchableOpacity>
 			</View>
 		</GestureHandlerRootView>
