@@ -134,8 +134,8 @@ export default function StartingHolds({ route }) {
     </TouchableOpacity>
   
   return (
-    <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.bodyText}>Next, select your starting hands and feet by tapping the holds.</Text>
+    <GestureHandlerRootView style={[styles.screen]} >
+      <Text style={styles.subHead}>2 / Tap your <Text style={{fontWeight: 'bold'}}>starting</Text> hands and feet.</Text>
       <StatusBar hidden={true} />
 
       <GestureDetector gesture={tap} style={{ flex: 1 }}>

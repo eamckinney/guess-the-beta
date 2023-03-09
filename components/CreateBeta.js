@@ -172,8 +172,8 @@ export default function CreateBeta() {
   });
 
   return (
-    <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.subHead}>Select your holds.</Text>
+    <GestureHandlerRootView style={[styles.screen]}>
+      <Text style={styles.subHead}>1 / Tap the holds on your problem.</Text>
       <StatusBar hidden={true} />
       
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>

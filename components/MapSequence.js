@@ -166,10 +166,8 @@ export default function MapSequence({ route }) {
 	});
 
 	return (
-		<GestureHandlerRootView style={styles.screen}>
-			<Text style={styles.bodyText}>
-				Now, draw lines between holds to create your beta.
-			</Text>
+		<GestureHandlerRootView style={[styles.screen]}>
+			<Text style={styles.subHead}>3 / Draw lines between holds to create your beta.</Text>
 			<StatusBar hidden={true} />
 			<GestureDetector gesture={pan} style={{ flex: 1 }}>
 				<View style={{ height: windowHeight * 0.77, width: windowWidth, alignItems: "center"}} >
