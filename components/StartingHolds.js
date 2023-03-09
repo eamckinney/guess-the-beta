@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import { styles } from '../styles.js';
 import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
-import Svg from "react-native-svg"
+import { Svg, Defs, Rect, Mask, Circle } from 'react-native-svg';
 
 
 export default function StartingHolds({ route }) {
@@ -92,9 +92,9 @@ export default function StartingHolds({ route }) {
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
-  const renderHolds = holds.map((hold, i) => {
+  const renderAppendages = holds.map((hold, i) => {
     return(
-      <Animated.View key={i} style={[styles.circleShape, 
+      <Animated.View key={i} style={[
         { 
           position: 'absolute',
           left: hold.x - (hold.radius / 2),
@@ -102,12 +102,11 @@ export default function StartingHolds({ route }) {
           width: hold.radius,
           height: hold.radius,
           borderRadius: (hold.radius / 2),
-          backgroundColor: hold.backgroundColor,
-          borderColor: hold.borderColor,
           alignItems: 'center',
           justifyContent: 'center',
         },
       ]}>
+        
         <Svg height="80%" width="80%">
         { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
         { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
@@ -117,6 +116,14 @@ export default function StartingHolds({ route }) {
         
       </Animated.View>
       
+    );
+  });
+
+
+
+  const circles = holds.map((hold, i) => {
+    return(
+      <Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
     );
   });
 
@@ -140,9 +147,21 @@ export default function StartingHolds({ route }) {
 
       <GestureDetector gesture={tap} style={{ flex: 1 }}>
         <Animated.View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
-          { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> } 
+          { image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
+          
+          <Svg height="100%" width="100%">
+            <Defs>
+              <Mask id="mask" x="0" y="0" height="100%" width="100%">
+                <Rect height="100%" width="100%" fill="#fff" />
+                {circles}
+              </Mask>
+            </Defs>
+            <Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
+            
+          </Svg>
+          {renderAppendages}
           { label }
-          { renderHolds }
+          
         </Animated.View>
       </GestureDetector>
 

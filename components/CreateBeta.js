@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Dimensions, Animated, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -180,8 +180,8 @@ export default function CreateBeta() {
         <PinchGestureHandler onGestureEvent={handlePinch} onHandlerStateChange={_onPinchStateChange}>
           <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
-            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }
-            { holds.length > 0 && renderHolds }
+          { image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> }
+          { holds.length > 0 && renderHolds }
 
           </Animated.View>
         </PinchGestureHandler>

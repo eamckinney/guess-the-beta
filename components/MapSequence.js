@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { styles } from "../styles.js";
-import Svg, { Polyline } from "react-native-svg";
+import { Svg, Defs, Rect, Mask, Circle, Polyline } from 'react-native-svg';
 import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
 
 
@@ -165,18 +165,62 @@ export default function MapSequence({ route }) {
 		);
 	});
 
+	const renderAppendages = holds.map((hold, i) => {
+    return(
+      <Animated.View key={i} style={[
+        { 
+          position: 'absolute',
+          left: hold.x - (hold.radius / 2),
+          top: hold.y - (hold.radius / 2),
+          width: hold.radius,
+          height: hold.radius,
+          borderRadius: (hold.radius / 2),
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+      ]}>
+        
+        <Svg height="80%" width="80%">
+        { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
+        </Svg>
+        
+      </Animated.View>
+      
+    );
+  });
+
+  const circles = holds.map((hold, i) => {
+    return(
+      <Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
+    );
+  });
+
 	return (
 		<GestureHandlerRootView style={[styles.screen]}>
 			<Text style={styles.subHead}>3 / Draw lines between holds to create your beta.</Text>
 			<StatusBar hidden={true} />
 			<GestureDetector gesture={pan} style={{ flex: 1 }}>
-				<View style={{ height: windowHeight * 0.77, width: windowWidth, alignItems: "center"}} >
-					<View>
-						{image && (<Image source={{ uri: image }} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]}/>)}
-						{renderHolds}
-						{MoveNumbers}
-					</View>
+				<View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
+					
+					{ image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
 
+					<Svg height="100%" width="100%">
+						<Defs>
+							<Mask id="mask" x="0" y="0" height="100%" width="100%">
+								<Rect height="100%" width="100%" fill="#fff" />
+								{circles}
+							</Mask>
+						</Defs>
+						<Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
+						
+					</Svg>
+					
+					{renderAppendages}
+					{MoveNumbers}
+					
 					<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
 						<InProcessPath />
 						{GesturePaths}

@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   subHead: {
     color: '#fff',
     fontFamily: 'Montserrat_200ExtraLight',
-    fontSize: 20,
+    fontSize: 15,
     marginHorizontal: 20,
     marginTop: 30,
   },
