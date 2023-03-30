@@ -7,7 +7,6 @@ import { styles } from '../styles.js';
 import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
 import { Svg, Defs, Rect, Mask, Circle } from 'react-native-svg';
 
-
 export default function StartingHolds({ route }) {
   
   const [holds, setHolds] = useState(route.params.holds);
@@ -66,8 +65,8 @@ export default function StartingHolds({ route }) {
         
         setSeq(seq+1);
         setLabelText(startingPosition[seq]);
-        console.log('seq: ', seq)
-        console.log(holds);
+        //console.log('seq: ', seq)
+        //console.log(holds);
       }
 
     });
@@ -127,6 +126,20 @@ export default function StartingHolds({ route }) {
     );
   });
 
+  const HoldMap = () => {
+    return(
+      <Svg height="100%" width="100%">
+        <Defs>
+          <Mask id="mask" x="0" y="0" height="100%" width="100%">
+            <Rect height="100%" width="100%" fill="#fff" />
+            {circles}
+          </Mask>
+        </Defs>
+        <Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
+      </Svg>
+    );
+  };
+
   const label = 
     seq < 5 
     ?
@@ -149,16 +162,7 @@ export default function StartingHolds({ route }) {
         <Animated.View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
           { image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
           
-          <Svg height="100%" width="100%">
-            <Defs>
-              <Mask id="mask" x="0" y="0" height="100%" width="100%">
-                <Rect height="100%" width="100%" fill="#fff" />
-                {circles}
-              </Mask>
-            </Defs>
-            <Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
-            
-          </Svg>
+          <HoldMap />
           {renderAppendages}
           { label }
           

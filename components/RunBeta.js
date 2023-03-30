@@ -134,7 +134,7 @@ export default function MapSequence({ route }) {
 
         <Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
           {GesturePaths}
-					{console.log("paths:", paths)}
+					{/*console.log("paths:", paths)*/}
 
         </Svg>
       </View>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
@@ -24,19 +24,12 @@ export default function MapSequence({ route }) {
 	const navigation = useNavigation();
 	const runBeta = () => navigation.navigate('Run Beta', {holds: holds, image: image, paths: paths, moves: moves});
 
-	
-
-	useEffect(() => {
-	}, []);
-
-
-	
+	useEffect(() => {}, []);
 
 	// ******************************* //
 	// PAN TO CREATE PATHS IN BETWEEN HOLDS //
 
-	const pan = useMemo(
-		() => Gesture.Pan()
+	const pan = Gesture.Pan()
 		.maxPointers(1)
 		.onStart(() => {
 			setPath([]);
@@ -62,43 +55,37 @@ export default function MapSequence({ route }) {
 			setPath([{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]);
 			// USE PATHS TO RUN BETA??
 			// ADD APPENDAGE TO PATHS?
-			
-			
-			
 			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
 
-			/*const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
+			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
 			if (slope > 0) {
 				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
 			} else {
 				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
-			}*/
+			}
 
 			let newHolds = [...holds];
 			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
-			/*if (newHolds[lastHoldIndex].seq) {
+			if (newHolds[lastHoldIndex].seq) {
 				newHolds[lastHoldIndex].seq = [...newHolds[lastHoldIndex].seq, { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } }];
 			} else {
 				newHolds[lastHoldIndex].seq = [ { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } } ];
-			}*/
+			}
 			
 			newHolds[firstHoldIndex].appendage = [];
 			setHolds(newHolds);
 			//console.log(holds);
 
-			
+		});
 
-		})
-	);
-
-	const InProcessPath = useMemo(() => {
+	const InProcessPath = () => {
 		const points = path ? path.map((p) => `${p.x},${p.y}`).join(" ") : "";
 		return (
 			<Polyline points={points} fill="none" stroke="white" strokeWidth="1" />
 		);
-	});
+	};
 
-	const GesturePaths = useMemo(() => paths.map((line, i) => {
+	const GesturePaths = paths.map((line, i) => {
 		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
 		return (
 			<Polyline
@@ -109,9 +96,9 @@ export default function MapSequence({ route }) {
 				strokeWidth="1"
 			/>
 		);
-	}));
+	});
 
-	/*const MoveNumbers = moves.map((move, i) => {
+	const MoveNumbers = moves.map((move, i) => {
 		if (i == 0) { return }
 		else {
 			return (
@@ -134,7 +121,7 @@ export default function MapSequence({ route }) {
 			);
 		}
 		
-	});*/
+	});
 
 	// ******************************* //
 	// UNDO BUTTON TO REMOVE LAST PATH //
@@ -148,79 +135,99 @@ export default function MapSequence({ route }) {
 	// ******************************************* //
 	// MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
 
-	const circles = useMemo(() => holds.map((hold, i) => {
-		return(
-			<Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
-		);
-	}));
-
-	const HoldMap = useMemo(() => {
-		return(
-			<Svg height="100%" width="100%">
-				<Defs>
-					<Mask id="mask" x="0" y="0" height="100%" width="100%">
-						<Rect height="100%" width="100%" fill="#fff" />
-						{circles}
-					</Mask>
-				</Defs>
-				<Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
-			</Svg>
+	const renderHolds = holds.map((hold, i) => {
+		return (
+			<Animated.View
+				key={i}
+				style={[
+					styles.circleShape,
+					{
+						position: "absolute",
+						left: hold.x - hold.radius / 2,
+						top: hold.y - hold.radius / 2,
+						width: hold.radius,
+						height: hold.radius,
+						borderRadius: hold.radius / 2,
+						backgroundColor: hold.backgroundColor,
+						borderColor: hold.borderColor,
+						alignItems: "center",
+						justifyContent: "center",
+					},
+				]}
+			>
+				<Svg height="80%" width="80%">
+				{ (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
+        </Svg>
+			</Animated.View>
 		);
 	});
 
-	const RenderAppendages = useMemo(() => holds
-		.filter(hold => hold.appendage && hold.appendage.length > 0)
-		.map((hold, i) => {
-			
-			return(
-				<Animated.View key={i} style={[
-					{ 
-						position: 'absolute',
-						left: hold.x - (hold.radius / 2),
-						top: hold.y - (hold.radius / 2),
-						width: hold.radius,
-						height: hold.radius,
-						borderRadius: (hold.radius / 2),
-						alignItems: 'center',
-						justifyContent: 'center',
-					},
-				]}>
-					
-					<Svg height="80%" width="80%">
-					{ (hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
-					{ (hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
-					{ (hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
-					{ (hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
-					</Svg>
-					
-				</Animated.View>
-				
-			);
-		}));
-  
+	const renderAppendages = holds.map((hold, i) => {
+    return(
+      <Animated.View key={i} style={[
+        { 
+          position: 'absolute',
+          left: hold.x - (hold.radius / 2),
+          top: hold.y - (hold.radius / 2),
+          width: hold.radius,
+          height: hold.radius,
+          borderRadius: (hold.radius / 2),
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+      ]}>
+        
+        <Svg height="80%" width="80%">
+        { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
+        </Svg>
+        
+      </Animated.View>
+      
+    );
+  });
+
+  const circles = holds.map((hold, i) => {
+    return(
+      <Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
+    );
+  });
 
 	return (
 		<GestureHandlerRootView style={[styles.screen]}>
 			<Text style={styles.subHead}>3 / Draw lines between holds to create your beta.</Text>
 			<StatusBar hidden={true} />
-			
+			<GestureDetector gesture={pan} style={{ flex: 1 }}>
 				<View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
 					
 					{ image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
 
-					{HoldMap}
-					{RenderAppendages}					
+					<Svg height="100%" width="100%">
+						<Defs>
+							<Mask id="mask" x="0" y="0" height="100%" width="100%">
+								<Rect height="100%" width="100%" fill="#fff" />
+								{circles}
+							</Mask>
+						</Defs>
+						<Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
+						
+					</Svg>
 					
-					{/*MoveNumbers*/}
+					{renderAppendages}
+					{MoveNumbers}
 					
-					<GestureDetector gesture={pan} style={{ flex: 1 }}>
-						<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
-							{InProcessPath}
-							{GesturePaths}
-						</Svg>
-					</GestureDetector>
+					<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
+						<InProcessPath />
+						{GesturePaths}
+					</Svg>
 				</View>
-			
+			</GestureDetector>
+
 			<View style={styles.buttonRow}>
 				<TouchableOpacity
 					onPress={() => undo()}

@@ -38,8 +38,8 @@ export default function CreateBeta() {
       }
     ]);
     setCircleRadius(30);
-    console.log(`circle added at ${x} and ${y}`);
-    console.log("holds.length: " + holds.length);
+    //console.log(`circle added at ${x} and ${y}`);
+    //console.log("holds.length: " + holds.length);
 
   }
 
@@ -48,12 +48,12 @@ export default function CreateBeta() {
 
   const undo = () => {
 
-    console.log("hold to remove: " + holds[holds.length-1].x, holds[holds.length-1].y);
+    //console.log("hold to remove: " + holds[holds.length-1].x, holds[holds.length-1].y);
     setHolds((current) =>
       current.slice(0,-1)
     );
 
-    console.log("undo holds.length: " + holds.length);
+    //console.log("undo holds.length: " + holds.length);
   }
 
   // ******************* //
@@ -67,7 +67,7 @@ export default function CreateBeta() {
     scaleVal.setValue(event.nativeEvent.scale);
     if (event.nativeEvent.scale != 1) {
 
-      console.log(event.nativeEvent);
+      //console.log(event.nativeEvent);
 
       let newHolds = [...holds];
       newHolds[(newHolds.length-1)].radius = circleRadius * scaleVal._value;
@@ -132,7 +132,7 @@ export default function CreateBeta() {
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
   const renderHolds = holds.map((hold, i) => {
-    console.log(holds);
+    //console.log(holds);
     if (i < holds.length-1) {
       return(
         <Animated.View key={i} style={[styles.circleShape, 
