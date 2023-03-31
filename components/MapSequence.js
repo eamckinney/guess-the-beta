@@ -21,40 +21,11 @@ export default function MapSequence({ route }) {
 	const navigation = useNavigation();
 	const runBeta = () => navigation.navigate('Run Beta', {holds: holds, image: image, paths: paths, moves: moves});
 
-	console.log("default function");
-	
+		
 
 	useEffect(() => {
 	}, []);
 
-
-	
-
-
-	/*const MoveNumbers = moves.map((move, i) => {
-		if (i == 0) { return }
-		else {
-			return (
-				<Animated.View
-					key={i}
-					style={[
-						{
-							position: "absolute",
-							left: move.x,
-							top: move.y,
-							width: 20,
-							height: 20,
-							alignItems: "center",
-							justifyContent: "center",
-						},
-					]}
-				>
-					<Text style={{color: 'white'}}>{i}</Text>
-				</Animated.View>
-			);
-		}
-		
-	});*/
 
 	// ******************************* //
 	// UNDO BUTTON TO REMOVE LAST PATH //
@@ -70,16 +41,13 @@ export default function MapSequence({ route }) {
 
 	const circles = useMemo(() => holds.map((hold, i) => {
 		return(
-			<Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black">
-				{ console.log("circles") }
-			</Circle>
+			<Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
 		);
 	}));
 
 	const HoldMap = useMemo(() => {
 		return(
 			<Svg height="100%" width="100%">
-				{ console.log("hold map") }
 				<Defs>
 					<Mask id="mask" x="0" y="0" height="100%" width="100%">
 						<Rect height="100%" width="100%" fill="#fff" />
@@ -107,10 +75,7 @@ export default function MapSequence({ route }) {
 						alignItems: 'center',
 						justifyContent: 'center',
 					},
-				]}>
-
-					{console.log("render appendages: ", i)}
-					
+				]}>					
 					<Svg height="70%" width="70%">
 					{ (hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
 					{ (hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
@@ -121,7 +86,33 @@ export default function MapSequence({ route }) {
 				</Animated.View>
 				
 			);
-		}));
+	}));
+
+	
+	const MoveNumbers = moves.map((move, i) => {
+		if (i == 0) { return }
+		else {
+			return (
+				<Animated.View
+					key={i}
+					style={[
+						{
+							position: "absolute",
+							left: move.x,
+							top: move.y,
+							width: 20,
+							height: 20,
+							alignItems: "center",
+							justifyContent: "center",
+						},
+					]}
+				>
+					<Text style={{color: 'white'}}>{i}</Text>
+				</Animated.View>
+			);
+		}
+		
+	});
 
 	return (
 		<GestureHandlerRootView style={[styles.screen]}>
@@ -134,9 +125,9 @@ export default function MapSequence({ route }) {
 
 					{HoldMap}
 					{RenderAppendages}
-					{/*MoveNumbers*/}
-					
-					<Gestures holds={holds} changeHolds={setHolds} />
+					{MoveNumbers}
+
+					<Gestures holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} />
 					
 				</View>
 			
@@ -159,7 +150,7 @@ export default function MapSequence({ route }) {
 }
 
 
-function Gestures({holds, changeHolds}) {
+function Gestures({holds, changeHolds, moves, changeMoves}) {
 	
 	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 	const windowWidth = Dimensions.get("window").width;
@@ -181,9 +172,7 @@ function Gestures({holds, changeHolds}) {
 		.onUpdate((e) => {
 			setPath([...path, { x: e.x, y: e.y }]);
 		})
-		.onEnd(() => {
-			console.log("pan gesture onEnd()");
-	
+		.onEnd(() => {	
 			let firstHoldDistance = [];
 			let lastHoldDistance = [];
 			for (let i = 0; i < holds.length; i++) {
@@ -203,12 +192,12 @@ function Gestures({holds, changeHolds}) {
 			
 			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
 
-			/*const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
+			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
 			if (slope > 0) {
-				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
+				changeMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
 			} else {
-				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
-			}*/
+				changeMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
+			}
 
 			let newHolds = [...holds];
 			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
@@ -233,7 +222,6 @@ function Gestures({holds, changeHolds}) {
 
 	const GesturePaths = useMemo(() => paths.map((line, i) => {
 		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
-		console.log("gesture paths: ", i);
 		return (
 			<Polyline
 				key={i}
@@ -244,9 +232,6 @@ function Gestures({holds, changeHolds}) {
 			/>
 		);
 	}));
-
-	
-
 
 	return (
 		<GestureDetector gesture={pan} style={{ flex: 1 }}>
