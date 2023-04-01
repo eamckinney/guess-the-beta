@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-n
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { styles } from '../styles.js';
 
@@ -21,18 +22,9 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const createBeta = () => navigation.navigate('Create Beta')
 
-  const [image,setImage] = useState(null)
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-      allowsEditing:true
-    });
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
+  const [image, setImage] = useState(null)
+  const [holds, setHolds] = useState(null)
+  const [paths, setPaths] = useState(null)
   
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
@@ -49,6 +41,22 @@ export default function HomeScreen() {
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         //await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const savedHolds = await AsyncStorage.getItem("holds");
+        const savedPaths = await AsyncStorage.getItem("paths");
+        
+        const currentImage = await AsyncStorage.getItem("image");
+        const currentHolds = JSON.parse(savedHolds);
+        const currentPaths = JSON.parse(savedPaths);
+
+        setImage(currentImage);
+        setHolds(currentHolds);
+        setPaths(currentPaths);
+
+        console.log("CURRENT HOLDS: ", currentHolds);
+        console.log("CURRENT PATHS: ", currentPaths);
+        console.log("CURRENT IMAGE: ", currentImage);
+
       } catch (e) {
         console.warn(e);
       } finally {
@@ -56,6 +64,7 @@ export default function HomeScreen() {
         setAppIsReady(true);
       }
     }
+
 
     prepare();
   }, []);
@@ -74,8 +83,6 @@ export default function HomeScreen() {
   if (!appIsReady) {
     return null;
   }
-
-  
   
   return (
     <View
@@ -91,7 +98,12 @@ export default function HomeScreen() {
               style={styles.buttonLayout}
               >
               <Text style={styles.buttonText}>Add some betas</Text>
+              
             </TouchableOpacity> 
+          </View>
+          <Text style={styles.homeSubHead}>Your saved betas:</Text>
+          <View>
+            <Image style={styles.challenges} source={{uri:image}}/>
           </View>
 
         </View>

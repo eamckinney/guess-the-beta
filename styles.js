@@ -23,12 +23,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 30,
   },
-  bodyText: {
+  homeSubHead: {
     color: '#fff',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 16,
-    marginHorizontal: 20,
-    marginTop: 20,
+    marginTop: 40,
+  },
+  challenges: {
+    marginTop: 10,
+    height: 100,
+    width: 100,
+    borderRadius: 10,
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',

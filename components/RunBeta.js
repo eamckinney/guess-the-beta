@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { useNavigation } from '@react-navigation/native';
+import { Text, View, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { styles } from "../styles.js";
 import { Svg, Defs, Rect, Mask, Circle, Polyline } from 'react-native-svg';
 import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
@@ -15,7 +18,8 @@ export default function MapSequence({ route }) {
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
-
+	const navigation = useNavigation();
+	const goHome = () => navigation.navigate('Challenges');
 
 	// ************************************** //
 	// INITIAL ANIMATED VALUES FOR APPENDAGES //
@@ -131,9 +135,6 @@ export default function MapSequence({ route }) {
 		})
 	}
 
-	console.log(rightFootDiff)
-	console.log(rightFootPaths)
-
 	// LEFT FOOT //
 	const leftFootDiff = paths
 		.map((path, i) => {
@@ -180,8 +181,6 @@ export default function MapSequence({ route }) {
 			const foundLeftHand = leftHandPaths.find(item => item.i == i+1);
 			const foundRightFoot = rightFootPaths.find(item => item.i == i+1);
 			const foundLeftFoot = leftFootPaths.find(item => item.i == i+1);
-
-			console.log(foundRightFoot);
 
 			if (foundRightHand) {
 				AnimationSequence.push(
@@ -377,10 +376,32 @@ export default function MapSequence({ route }) {
 			);
 	}));
 
+	const Save = (holds, paths, image) => {
+
+	
+		//console.log("IMAGE: ", image);
+
+	
+		
+		const store = async () => {
+			try {
+				await AsyncStorage.setItem("holds", JSON.stringify(holds));
+				await AsyncStorage.setItem("paths", JSON.stringify(paths));
+				await AsyncStorage.setItem("image", image);
+			} catch (error) {
+				console.log(error);
+			}
+		};
+	
+		store();
+		goHome();
+	
+	}
+
 
   return (
 		<GestureHandlerRootView style={styles.screen}>
-			<Text style={styles.bodyText}>
+			<Text style={styles.subHead}>
 				Look at 'em climb!
 			</Text>
 			<StatusBar hidden={true} />
@@ -409,7 +430,7 @@ export default function MapSequence({ route }) {
 					<Text style={styles.buttonText}>Edit</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					//onPress={() => runBeta()}
+					onPress={() => Save(holds, paths, image)}
 					style={[styles.buttonStyle, { backgroundColor: "#2A9D8F" }]}
 				>
 					<Text style={styles.buttonText}>Save</Text>
@@ -418,3 +439,5 @@ export default function MapSequence({ route }) {
 		</GestureHandlerRootView>
 	);
 }
+
+//function 
