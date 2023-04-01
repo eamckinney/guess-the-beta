@@ -11,17 +11,16 @@ import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js'
 export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
-	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 
+	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 	const [moves, setMoves] = useState(examplePath);
+	const [paths, setPaths] = useState([examplePath]);
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
 	const navigation = useNavigation();
 	const runBeta = () => navigation.navigate('Run Beta', {holds: holds, image: image, paths: paths, moves: moves});
-
-		
 
 	useEffect(() => {
 	}, []);
@@ -127,7 +126,7 @@ export default function MapSequence({ route }) {
 					{RenderAppendages}
 					{MoveNumbers}
 
-					<Gestures holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} />
+					<PathTracking holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} paths={paths} changePaths={setPaths}/>
 					
 				</View>
 			
@@ -150,15 +149,13 @@ export default function MapSequence({ route }) {
 }
 
 
-function Gestures({holds, changeHolds, moves, changeMoves}) {
+function PathTracking({holds, changeHolds, moves, changeMoves, paths, changePaths}) {
 	
 	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
-	const [path, setPath] = useState(examplePath);
-	const [paths, setPaths] = useState([examplePath]);
-	
+	const [path, setPath] = useState(examplePath);	
 
 	// ******************************* //
 	// PAN TO CREATE PATHS IN BETWEEN HOLDS //
@@ -190,7 +187,7 @@ function Gestures({holds, changeHolds, moves, changeMoves}) {
 			// USE PATHS TO RUN BETA??
 			// ADD APPENDAGE TO PATHS?
 			
-			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
+			changePaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
 
 			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
 			if (slope > 0) {
