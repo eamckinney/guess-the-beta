@@ -19,13 +19,19 @@ SplashScreen.preventAutoHideAsync();
 export default function HomeScreen() {
   const [appIsReady, setAppIsReady] = useState(false);
   
-  const navigation = useNavigation();
-  const createBeta = () => navigation.navigate('Create Beta')
-
   const [image, setImage] = useState(null)
   const [holds, setHolds] = useState(null)
   const [paths, setPaths] = useState(null)
-  
+
+  const navigation = useNavigation();
+  const createBeta = () => navigation.navigate('Create Beta')
+	const runBeta = () => navigation.navigate('Create Beta', {
+    screen: 'Run Beta',
+    params: {holds: holds, image: image, paths: paths}
+  });
+    
+    //'Run Beta', {holds: holds, image: image, paths: paths});
+
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
     Montserrat_400Regular
@@ -103,7 +109,12 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.homeSubHead}>Your saved betas:</Text>
           <View>
-            <Image style={styles.challenges} source={{uri:image}}/>
+            <TouchableOpacity
+              onPress={() => runBeta()}
+            >
+              <Image style={styles.challenges} source={{uri:image}}/>
+            </TouchableOpacity>
+            
           </View>
 
         </View>

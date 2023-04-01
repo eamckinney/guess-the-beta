@@ -13,7 +13,7 @@ export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
   const [paths, setPaths] = useState(route.params.paths);
-	const [moves, setMoves] = useState(route.params.moves);
+	//const [moves, setMoves] = useState(route.params.moves);
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -266,7 +266,7 @@ export default function MapSequence({ route }) {
 
 	// *********************** //
 	// RENDERABLE MOVE NUMBERS //
-	const MoveNumbers = moves.map((move, i) => {
+	/*const MoveNumbers = moves.map((move, i) => {
 		if (i == 0) { return }
 		else {
 			return (
@@ -288,7 +288,7 @@ export default function MapSequence({ route }) {
 				</Animated.View>
 			);
 		}
-	});
+	});*/
 
 	// ******************************************* //
 	// MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
