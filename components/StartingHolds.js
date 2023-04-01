@@ -61,6 +61,7 @@ export default function StartingHolds({ route }) {
         newHolds[selected].backgroundColor = selectedBackground;
         newHolds[selected].borderColor = selectedBorder;
         newHolds[selected].appendage = [startingPosition[seq-1]];
+        newHolds[selected].startingAppendage = [startingPosition[seq-1]];
         setHolds(newHolds);
         
         setSeq(seq+1);
@@ -91,13 +92,15 @@ export default function StartingHolds({ route }) {
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
-  const renderAppendages = holds.map((hold, i) => {
+  const renderAppendages = holds
+    .filter(hold => hold.startingAppendage && hold.startingAppendage.length > 0)
+    .map((hold, i) => {
     return(
       <Animated.View key={i} style={[
         { 
           position: 'absolute',
           left: hold.x - (hold.radius / 2),
-          top: hold.y - (hold.radius / 2),
+          top: hold.y - (hold.radius / 2) + 1,
           width: hold.radius,
           height: hold.radius,
           borderRadius: (hold.radius / 2),
@@ -106,7 +109,7 @@ export default function StartingHolds({ route }) {
         },
       ]}>
         
-        <Svg height="80%" width="80%">
+        <Svg height="70%" width="70%">
         { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
         { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
         { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }

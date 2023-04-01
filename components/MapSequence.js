@@ -13,10 +13,8 @@ export default function MapSequence({ route }) {
 	const [image, setImage] = useState(route.params.image);
 
 	const examplePath = [{ x: 0, y: 0, appendage: '' }];
-
-	const [path, setPath] = useState(examplePath);
-	const [paths, setPaths] = useState([examplePath]);
 	const [moves, setMoves] = useState(examplePath);
+	const [paths, setPaths] = useState([examplePath]);
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -24,117 +22,9 @@ export default function MapSequence({ route }) {
 	const navigation = useNavigation();
 	const runBeta = () => navigation.navigate('Run Beta', {holds: holds, image: image, paths: paths, moves: moves});
 
-	
-
 	useEffect(() => {
 	}, []);
 
-
-	
-
-	// ******************************* //
-	// PAN TO CREATE PATHS IN BETWEEN HOLDS //
-
-	const pan = useMemo(
-		() => Gesture.Pan()
-		.maxPointers(1)
-		.onStart(() => {
-			setPath([]);
-		})
-		.onUpdate((e) => {
-			setPath([...path, { x: e.x, y: e.y }]);
-		})
-		.onEnd(() => {
-	
-			let firstHoldDistance = [];
-			let lastHoldDistance = [];
-			for (let i = 0; i < holds.length; i++) {
-				firstHoldDistance[i] = Math.abs(path[0].x - holds[i].x) + Math.abs((path[0].y) - holds[i].y);
-				lastHoldDistance[i] = Math.abs(path[path.length-1].x - holds[i].x) + Math.abs((path[path.length-1].y) - holds[i].y);
-			}
-
-			const firstHoldIndex = firstHoldDistance.indexOf(Math.min(...firstHoldDistance));
-			const lastHoldIndex = lastHoldDistance.indexOf(Math.min(...lastHoldDistance));
-
-			const firstHold = holds[firstHoldIndex]
-			const lastHold = holds[lastHoldIndex]
-
-			setPath([{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]);
-			// USE PATHS TO RUN BETA??
-			// ADD APPENDAGE TO PATHS?
-			
-			
-			
-			setPaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
-
-			/*const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
-			if (slope > 0) {
-				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
-			} else {
-				setMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
-			}*/
-
-			let newHolds = [...holds];
-			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
-			/*if (newHolds[lastHoldIndex].seq) {
-				newHolds[lastHoldIndex].seq = [...newHolds[lastHoldIndex].seq, { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } }];
-			} else {
-				newHolds[lastHoldIndex].seq = [ { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } } ];
-			}*/
-			
-			newHolds[firstHoldIndex].appendage = [];
-			setHolds(newHolds);
-			//console.log(holds);
-
-			
-
-		})
-	);
-
-	const InProcessPath = useMemo(() => {
-		const points = path ? path.map((p) => `${p.x},${p.y}`).join(" ") : "";
-		return (
-			<Polyline points={points} fill="none" stroke="white" strokeWidth="1" />
-		);
-	});
-
-	const GesturePaths = useMemo(() => paths.map((line, i) => {
-		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
-		return (
-			<Polyline
-				key={i}
-				points={points}
-				fill="none"
-				stroke="white"
-				strokeWidth="1"
-			/>
-		);
-	}));
-
-	/*const MoveNumbers = moves.map((move, i) => {
-		if (i == 0) { return }
-		else {
-			return (
-				<Animated.View
-					key={i}
-					style={[
-						{
-							position: "absolute",
-							left: move.x,
-							top: move.y,
-							width: 20,
-							height: 20,
-							alignItems: "center",
-							justifyContent: "center",
-						},
-					]}
-				>
-					<Text style={{color: 'white'}}>{i}</Text>
-				</Animated.View>
-			);
-		}
-		
-	});*/
 
 	// ******************************* //
 	// UNDO BUTTON TO REMOVE LAST PATH //
@@ -166,7 +56,7 @@ export default function MapSequence({ route }) {
 				<Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
 			</Svg>
 		);
-	});
+	});  
 
 	const RenderAppendages = useMemo(() => holds
 		.filter(hold => hold.appendage && hold.appendage.length > 0)
@@ -177,16 +67,15 @@ export default function MapSequence({ route }) {
 					{ 
 						position: 'absolute',
 						left: hold.x - (hold.radius / 2),
-						top: hold.y - (hold.radius / 2),
+						top: hold.y - (hold.radius / 2) + 1,
 						width: hold.radius,
 						height: hold.radius,
 						borderRadius: (hold.radius / 2),
 						alignItems: 'center',
 						justifyContent: 'center',
 					},
-				]}>
-					
-					<Svg height="80%" width="80%">
+				]}>					
+					<Svg height="70%" width="70%">
 					{ (hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
 					{ (hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
 					{ (hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
@@ -196,8 +85,33 @@ export default function MapSequence({ route }) {
 				</Animated.View>
 				
 			);
-		}));
-  
+	}));
+
+	
+	const MoveNumbers = moves.map((move, i) => {
+		if (i == 0) { return }
+		else {
+			return (
+				<Animated.View
+					key={i}
+					style={[
+						{
+							position: "absolute",
+							left: move.x,
+							top: move.y,
+							width: 20,
+							height: 20,
+							alignItems: "center",
+							justifyContent: "center",
+						},
+					]}
+				>
+					<Text style={{color: 'white'}}>{i}</Text>
+				</Animated.View>
+			);
+		}
+		
+	});
 
 	return (
 		<GestureHandlerRootView style={[styles.screen]}>
@@ -209,16 +123,11 @@ export default function MapSequence({ route }) {
 					{ image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
 
 					{HoldMap}
-					{RenderAppendages}					
+					{RenderAppendages}
+					{MoveNumbers}
+
+					<PathTracking holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} paths={paths} changePaths={setPaths}/>
 					
-					{/*MoveNumbers*/}
-					
-					<GestureDetector gesture={pan} style={{ flex: 1 }}>
-						<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
-							{InProcessPath}
-							{GesturePaths}
-						</Svg>
-					</GestureDetector>
 				</View>
 			
 			<View style={styles.buttonRow}>
@@ -236,5 +145,97 @@ export default function MapSequence({ route }) {
 				</TouchableOpacity>
 			</View>
 		</GestureHandlerRootView>
+	);
+}
+
+
+function PathTracking({holds, changeHolds, moves, changeMoves, paths, changePaths}) {
+	
+	const examplePath = [{ x: 0, y: 0, appendage: '' }];
+	const windowWidth = Dimensions.get("window").width;
+	const windowHeight = Dimensions.get("window").height;
+
+	const [path, setPath] = useState(examplePath);	
+
+	// ******************************* //
+	// PAN TO CREATE PATHS IN BETWEEN HOLDS //
+
+	const pan = useMemo(
+		() => Gesture.Pan()
+		.maxPointers(1)
+		.onStart(() => {
+			setPath([]);
+		})
+		.onUpdate((e) => {
+			setPath([...path, { x: e.x, y: e.y }]);
+		})
+		.onEnd(() => {	
+			let firstHoldDistance = [];
+			let lastHoldDistance = [];
+			for (let i = 0; i < holds.length; i++) {
+				firstHoldDistance[i] = Math.abs(path[0].x - holds[i].x) + Math.abs((path[0].y) - holds[i].y);
+				lastHoldDistance[i] = Math.abs(path[path.length-1].x - holds[i].x) + Math.abs((path[path.length-1].y) - holds[i].y);
+			}
+
+			const firstHoldIndex = firstHoldDistance.indexOf(Math.min(...firstHoldDistance));
+			const lastHoldIndex = lastHoldDistance.indexOf(Math.min(...lastHoldDistance));
+
+			const firstHold = holds[firstHoldIndex]
+			const lastHold = holds[lastHoldIndex]
+
+			setPath([{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]);
+			// USE PATHS TO RUN BETA??
+			// ADD APPENDAGE TO PATHS?
+			
+			changePaths([...paths, [{ x: firstHold.x, y: firstHold.y, appendage: firstHold.appendage }, { x: lastHold.x, y: lastHold.y, appendage: lastHold.appendage }]]);
+
+			const slope = -(lastHold.y - firstHold.y) / (lastHold.x - firstHold.x);
+			if (slope > 0) {
+				changeMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: firstHold.y - ((firstHold.y - lastHold.y)/2) } ])
+			} else {
+				changeMoves([...moves, { x: firstHold.x - ((firstHold.x - lastHold.x)/2), y: (firstHold.y - ((firstHold.y - lastHold.y)/2)) - 20 } ])
+			}
+
+			let newHolds = [...holds];
+			newHolds[lastHoldIndex].appendage = newHolds[firstHoldIndex].appendage;
+			/*if (newHolds[lastHoldIndex].seq) {
+				newHolds[lastHoldIndex].seq = [...newHolds[lastHoldIndex].seq, { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } }];
+			} else {
+				newHolds[lastHoldIndex].seq = [ { order: paths.length, appendage: newHolds[firstHoldIndex].appendage[0], from: { x: firstHold.x, y: firstHold.y }, to: { x: lastHold.x, y: lastHold.y } } ];
+			}*/
+			
+			newHolds[firstHoldIndex].appendage = [];
+			changeHolds(newHolds);
+
+		})
+	);
+
+	const InProcessPath = useMemo(() => {
+		const points = path ? path.map((p) => `${p.x},${p.y}`).join(" ") : "";
+		return (
+			<Polyline points={points} fill="none" stroke="white" strokeWidth="1" />
+		);
+	});
+
+	const GesturePaths = useMemo(() => paths.map((line, i) => {
+		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
+		return (
+			<Polyline
+				key={i}
+				points={points}
+				fill="none"
+				stroke="white"
+				strokeWidth="1"
+			/>
+		);
+	}));
+
+	return (
+		<GestureDetector gesture={pan} style={{ flex: 1 }}>
+			<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
+				{InProcessPath}
+				{GesturePaths}
+			</Svg>
+		</GestureDetector>
 	);
 }
