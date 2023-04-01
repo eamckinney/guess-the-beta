@@ -323,11 +323,11 @@ export default function MapSequence({ route }) {
 				<Animated.View key={i} style={[
 					{ 
 						position: 'absolute',
-						left: hold.x - (hold.radius / 2),
-						top: hold.y - (hold.radius / 2) + 1,
-						width: hold.radius,
-						height: hold.radius,
-						borderRadius: (hold.radius / 2),
+						left: hold.x - (15),
+						top: hold.y - (15) + 1,
+						width: 30,
+						height: 30,
+						borderRadius: (15),
 						alignItems: 'center',
 						justifyContent: 'center',
 					},
@@ -391,7 +391,7 @@ export default function MapSequence({ route }) {
 
 					{HoldMap}
 					{RenderAppendages}
-					{MoveNumbers}
+					{/*MoveNumbers*/}
 					
 				</View>
 
