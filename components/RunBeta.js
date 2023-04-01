@@ -11,6 +11,7 @@ export default function MapSequence({ route }) {
 	const [image, setImage] = useState(route.params.image);
   const [paths, setPaths] = useState(route.params.paths);
 	const [moves, setMoves] = useState(route.params.moves);
+	
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -22,22 +23,46 @@ export default function MapSequence({ route }) {
 	const endMoveY = 10;
   const duration = 2000;
 
+	const rightHandPaths = paths
+		.filter(path => path[0].appendage && path[0].appendage.includes('Right Hand'))
+		.map((path, i) => {
+			return({
+				i: i,
+				changeX: path[1].x - path[0].x,
+				changeY: path[1].y - path[0].y,
+			});
+	});
+
+	let RightHandAnimations = [];
+
+
+
 
 	useEffect(() => {
-    Animated.sequence([
-      Animated.parallel([
-				Animated.timing(initialMoveX, {
-					toValue: endMoveX,
-					duration: duration,
-					useNativeDriver: true,
-				}),
-				Animated.timing(initialMoveY, {
-					toValue: endMoveY,
-					duration: duration,
-					useNativeDriver: true,
-				}),
-			]),
-    ]).start();
+    for (let i = 0; i < rightHandPaths.length; i++) {
+			RightHandAnimations.push(
+				Animated.parallel([
+					Animated.timing(initialMoveX, {
+						toValue: rightHandPaths[i].changeX,
+						duration: duration,
+						useNativeDriver: true,
+					}),
+					Animated.timing(initialMoveY, {
+						toValue: rightHandPaths[i].changeY,
+						duration: duration,
+						useNativeDriver: true,
+					}),
+				])
+			)
+		}
+
+		console.log('rightHandPaths: ', rightHandPaths);
+		console.log('RightHandAnimations: ', RightHandAnimations);
+		
+		
+		
+		Animated.sequence(RightHandAnimations).start();
+
   }, [initialMoveX, initialMoveY]);
 
 	const GesturePaths = paths.map((line, i) => {
@@ -101,9 +126,9 @@ export default function MapSequence({ route }) {
 	});  
 
 	const RenderAppendages = useMemo(() => holds
-		.filter(hold => hold.appendage && hold.appendage.length > 0)
+		.filter(hold => hold.startingAppendage && hold.startingAppendage.length > 0)
 		.map((hold, i) => {
-			
+			console.log("RUNBETA.JS", hold);
 			return(
 				<Animated.View key={i} style={[
 					{ 
@@ -117,14 +142,46 @@ export default function MapSequence({ route }) {
 						justifyContent: 'center',
 					},
 				]}>					
-					<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialMoveX, translateY: initialMoveY }}>
-						<Svg height="70%" width="70%">
-						{ (hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
-						{ (hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
-						{ (hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
-						{ (hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
-						</Svg>
-					</Animated.View>
+					{ 
+						(hold.startingAppendage.includes('Right Hand')) ?
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialMoveX, translateY: initialMoveY }}>
+							<Svg height="70%" width="70%">
+								<RightHand/>
+							</Svg>
+						</Animated.View> 
+						: null
+					}
+
+					{
+						(hold.startingAppendage.includes('Left Hand')) ?
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+							<Svg height="70%" width="70%">
+							<LeftHand/>
+							</Svg>
+						</Animated.View>
+						: null
+					}
+
+					{
+						(hold.startingAppendage.includes('Right Foot')) ?
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+							<Svg height="70%" width="70%">
+							<RightFoot/>
+							</Svg>
+						</Animated.View>
+						: null
+					}
+
+					{
+						(hold.startingAppendage.includes('Left Foot')) ?
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+							<Svg height="70%" width="70%">
+							<LeftFoot/> 
+							</Svg>
+						</Animated.View>
+						: null
+					}
+
 				</Animated.View>
 				
 			);
@@ -146,12 +203,10 @@ export default function MapSequence({ route }) {
 					{RenderAppendages}
 					{MoveNumbers}
 					
-					
 				</View>
 
 				<Svg height="100%" width="100%" viewBox={`0 0 ${windowWidth} ${windowHeight * 0.77}`} style={{ position: "absolute", top: 0, zIndex: 1 }}>
 					{GesturePaths}
-					{/*console.log("paths:", paths)*/}
 
 				</Svg>
       </View>
