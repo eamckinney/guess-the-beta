@@ -11,32 +11,36 @@ export default function MapSequence({ route }) {
 	const [image, setImage] = useState(route.params.image);
   const [paths, setPaths] = useState(route.params.paths);
 	const [moves, setMoves] = useState(route.params.moves);
-	
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
   //USE PATHS VARIABLE TO DETERMINE COORDINATES??
-  const initialMoveX = useRef(new Animated.Value(0)).current;
-	const initialMoveY = useRef(new Animated.Value(0)).current;
+  const initialRightHandMoveX = useRef(new Animated.Value(0)).current;
+	const initialRightHandMoveY = useRef(new Animated.Value(0)).current;
+	const initialLeftHandMoveX = useRef(new Animated.Value(0)).current;
+	const initialLeftHandMoveY = useRef(new Animated.Value(0)).current;
   const duration = 2000;
 
 	const rightHandDiff = paths
-		.filter(path => path[0].appendage && path[0].appendage.includes('Right Hand'))
 		.map((path, i) => {
-			return({
-				i: i,
-				changeX: path[1].x - path[0].x,
-				changeY: path[1].y - path[0].y,
-			});
-	});
+			if (path[0].appendage && path[0].appendage.includes('Right Hand')) {
+				return({
+					i: i,
+					changeX: path[1].x - path[0].x,
+					changeY: path[1].y - path[0].y,
+				});
+			}
+		})
+		.filter(item => item !== undefined);
+
 
 	let rightHandPaths = [];
 
 	for (let i = 0; i < rightHandDiff.length; i++) {
 		rightHandPaths.push(
 			{
-				i: i,
+				i: rightHandDiff[i].i,
 				changeX: rightHandDiff
 					.slice(0,i+1)
 					.reduce(
@@ -53,32 +57,88 @@ export default function MapSequence({ route }) {
 		)
 	}
 
-	let RightHandAnimations = [];
+	const leftHandDiff = paths
+		.map((path, i) => {
+			if (path[0].appendage && path[0].appendage.includes('Left Hand')) {
+				return({
+					i: i,
+					changeX: path[1].x - path[0].x,
+					changeY: path[1].y - path[0].y,
+				});
+			}
+		})
+		.filter(item => item !== undefined);
+
+
+	let leftHandPaths = [];
+
+	for (let i = 0; i < leftHandDiff.length; i++) {
+		leftHandPaths.push(
+			{
+				i: leftHandDiff[i].i,
+				changeX: leftHandDiff
+					.slice(0,i+1)
+					.reduce(
+						(accumulator, currentValue) => accumulator + currentValue.changeX,
+						0,
+					),
+				changeY: leftHandDiff
+					.slice(0,i+1)
+					.reduce(
+						(accumulator, currentValue) => accumulator + currentValue.changeY,
+						0,
+					),
+			}
+		)
+	}
+
+	let Animations = []
 
 	useEffect(() => {
-    for (let i = 0; i < rightHandDiff.length; i++) {
-			console.log("change x/y: ",rightHandDiff[i].changeX, rightHandDiff[i].changeY);
-			console.log("NEW change x/y: ",rightHandPaths[i].changeX, rightHandPaths[i].changeY);
 
-			RightHandAnimations.push(
-				Animated.parallel([
-					Animated.timing(initialMoveX, {
-						toValue: rightHandPaths[i].changeX,
-						duration: duration,
-						useNativeDriver: true,
-					}),
-					Animated.timing(initialMoveY, {
-						toValue: rightHandPaths[i].changeY,
-						duration: duration,
-						useNativeDriver: true,
-					}),
-				])
-			)
+		for (let i = 0; i < paths.length; i++) {
+			const foundRightHand = rightHandPaths.find(item => item.i == i+1);
+			const foundLeftHand = leftHandPaths.find(item => item.i == i+1);
+
+			if (foundRightHand) {
+				Animations.push(
+					Animated.parallel([
+						Animated.timing(initialRightHandMoveX, {
+							toValue: foundRightHand.changeX,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+						Animated.timing(initialRightHandMoveY, {
+							toValue: foundRightHand.changeY,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+					])
+				)
+			} else if (foundLeftHand) {
+				Animations.push(
+					Animated.parallel([
+						Animated.timing(initialLeftHandMoveX, {
+							toValue: foundLeftHand.changeX,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+						Animated.timing(initialLeftHandMoveY, {
+							toValue: foundLeftHand.changeY,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+					])
+				)
+			}
+			
 		}
 		
-		Animated.sequence(RightHandAnimations).start();
+		console.log('Animations.length: ',Animations.length);
 
-  }, [initialMoveX, initialMoveY]);
+		Animated.sequence(Animations).start();
+
+  }, [initialRightHandMoveX, initialRightHandMoveY]);
 
 	const GesturePaths = paths.map((line, i) => {
 		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
@@ -143,7 +203,6 @@ export default function MapSequence({ route }) {
 	const RenderAppendages = useMemo(() => holds
 		.filter(hold => hold.startingAppendage && hold.startingAppendage.length > 0)
 		.map((hold, i) => {
-			console.log("RUNBETA.JS", hold);
 			return(
 				<Animated.View key={i} style={[
 					{ 
@@ -159,7 +218,7 @@ export default function MapSequence({ route }) {
 				]}>					
 					{ 
 						(hold.startingAppendage.includes('Right Hand')) ?
-						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialMoveX, translateY: initialMoveY }}>
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialRightHandMoveX, translateY: initialRightHandMoveY }}>
 							<Svg height="70%" width="70%">
 								<RightHand/>
 							</Svg>
@@ -169,7 +228,7 @@ export default function MapSequence({ route }) {
 
 					{
 						(hold.startingAppendage.includes('Left Hand')) ?
-						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialLeftHandMoveX, translateY: initialLeftHandMoveY }}>
 							<Svg height="70%" width="70%">
 							<LeftHand/>
 							</Svg>
