@@ -15,13 +15,27 @@ export default function MapSequence({ route }) {
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
-  //USE PATHS VARIABLE TO DETERMINE COORDINATES??
+
+
+	// ************************************** //
+	// INITIAL ANIMATED VALUES FOR APPENDAGES //
+
   const initialRightHandMoveX = useRef(new Animated.Value(0)).current;
 	const initialRightHandMoveY = useRef(new Animated.Value(0)).current;
 	const initialLeftHandMoveX = useRef(new Animated.Value(0)).current;
 	const initialLeftHandMoveY = useRef(new Animated.Value(0)).current;
-  const duration = 2000;
+	const initialRightFootMoveX = useRef(new Animated.Value(0)).current;
+	const initialRightFootMoveY = useRef(new Animated.Value(0)).current;
+	const initialLeftFootMoveX = useRef(new Animated.Value(0)).current;
+	const initialLeftFootMoveY = useRef(new Animated.Value(0)).current;
 
+  const duration = 1000;
+
+
+	// ******************************************************* //
+	// CALCULATING PATHWAY COORDINATES FOR APPENDAGE ANIMATION //
+
+	// RIGHT HAND //
 	const rightHandDiff = paths
 		.map((path, i) => {
 			if (path[0].appendage && path[0].appendage.includes('Right Hand')) {
@@ -34,29 +48,26 @@ export default function MapSequence({ route }) {
 		})
 		.filter(item => item !== undefined);
 
-
 	let rightHandPaths = [];
-
 	for (let i = 0; i < rightHandDiff.length; i++) {
-		rightHandPaths.push(
-			{
-				i: rightHandDiff[i].i,
-				changeX: rightHandDiff
-					.slice(0,i+1)
-					.reduce(
-						(accumulator, currentValue) => accumulator + currentValue.changeX,
-						0,
-					),
-				changeY: rightHandDiff
-					.slice(0,i+1)
-					.reduce(
-						(accumulator, currentValue) => accumulator + currentValue.changeY,
-						0,
-					),
-			}
-		)
+		rightHandPaths.push({
+			i: rightHandDiff[i].i,
+			changeX: rightHandDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeX,
+					0,
+				),
+			changeY: rightHandDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeY,
+					0,
+				),
+		})
 	}
 
+	// LEFT HAND //
 	const leftHandDiff = paths
 		.map((path, i) => {
 			if (path[0].appendage && path[0].appendage.includes('Left Hand')) {
@@ -69,39 +80,111 @@ export default function MapSequence({ route }) {
 		})
 		.filter(item => item !== undefined);
 
-
 	let leftHandPaths = [];
-
 	for (let i = 0; i < leftHandDiff.length; i++) {
-		leftHandPaths.push(
-			{
-				i: leftHandDiff[i].i,
-				changeX: leftHandDiff
-					.slice(0,i+1)
-					.reduce(
-						(accumulator, currentValue) => accumulator + currentValue.changeX,
-						0,
-					),
-				changeY: leftHandDiff
-					.slice(0,i+1)
-					.reduce(
-						(accumulator, currentValue) => accumulator + currentValue.changeY,
-						0,
-					),
-			}
-		)
+		leftHandPaths.push({
+			i: leftHandDiff[i].i,
+			changeX: leftHandDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeX,
+					0,
+				),
+			changeY: leftHandDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeY,
+					0,
+				),
+		})
 	}
 
-	let Animations = []
+	// RIGHT FOOT //
+	const rightFootDiff = paths
+		.map((path, i) => {
+			if (path[0].appendage && path[0].appendage.includes('Right Foot')) {
+				return({
+					i: i,
+					changeX: path[1].x - path[0].x,
+					changeY: path[1].y - path[0].y,
+				});
+			}
+		})
+		.filter(item => item !== undefined);
+
+	let rightFootPaths = [];
+	for (let i = 0; i < rightFootDiff.length; i++) {
+		rightFootPaths.push({
+			i: rightFootDiff[i].i,
+			changeX: rightFootDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeX,
+					0,
+				),
+			changeY: rightFootDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeY,
+					0,
+				),
+		})
+	}
+
+	console.log(rightFootDiff)
+	console.log(rightFootPaths)
+
+	// LEFT FOOT //
+	const leftFootDiff = paths
+		.map((path, i) => {
+			if (path[0].appendage && path[0].appendage.includes('Left Foot')) {
+				return({
+					i: i,
+					changeX: path[1].x - path[0].x,
+					changeY: path[1].y - path[0].y,
+				});
+			}
+		})
+		.filter(item => item !== undefined);
+
+	let leftFootPaths = [];
+	for (let i = 0; i < leftFootDiff.length; i++) {
+		leftFootPaths.push({
+			i: leftFootDiff[i].i,
+			changeX: leftFootDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeX,
+					0,
+				),
+			changeY: leftFootDiff
+				.slice(0,i+1)
+				.reduce(
+					(accumulator, currentValue) => accumulator + currentValue.changeY,
+					0,
+				),
+		})
+	}
+
+
+	// **************************** //
+	// CREATING APPENDAGE ANIMATION //
+
+	let AnimationSequence = []
 
 	useEffect(() => {
 
+		// loop through total # of paths, figure out which appendage moves, then add it to the sequence
 		for (let i = 0; i < paths.length; i++) {
 			const foundRightHand = rightHandPaths.find(item => item.i == i+1);
 			const foundLeftHand = leftHandPaths.find(item => item.i == i+1);
+			const foundRightFoot = rightFootPaths.find(item => item.i == i+1);
+			const foundLeftFoot = leftFootPaths.find(item => item.i == i+1);
+
+			console.log(foundRightFoot);
 
 			if (foundRightHand) {
-				Animations.push(
+				AnimationSequence.push(
 					Animated.parallel([
 						Animated.timing(initialRightHandMoveX, {
 							toValue: foundRightHand.changeX,
@@ -113,10 +196,9 @@ export default function MapSequence({ route }) {
 							duration: duration,
 							useNativeDriver: true,
 						}),
-					])
-				)
+					]))
 			} else if (foundLeftHand) {
-				Animations.push(
+				AnimationSequence.push(
 					Animated.parallel([
 						Animated.timing(initialLeftHandMoveX, {
 							toValue: foundLeftHand.changeX,
@@ -128,17 +210,47 @@ export default function MapSequence({ route }) {
 							duration: duration,
 							useNativeDriver: true,
 						}),
-					])
-				)
+					]))
+			} else if (foundRightFoot) {
+				AnimationSequence.push(
+					Animated.parallel([
+						Animated.timing(initialRightFootMoveX, {
+							toValue: foundRightFoot.changeX,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+						Animated.timing(initialRightFootMoveY, {
+							toValue: foundRightFoot.changeY,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+					]))
+			} else if (foundLeftFoot) {
+				AnimationSequence.push(
+					Animated.parallel([
+						Animated.timing(initialLeftFootMoveX, {
+							toValue: foundLeftFoot.changeX,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+						Animated.timing(initialLeftFootMoveY, {
+							toValue: foundLeftFoot.changeY,
+							duration: duration,
+							useNativeDriver: true,
+						}),
+					]))
 			}
-			
 		}
 		
-		console.log('Animations.length: ',Animations.length);
+		console.log('AnimationSequence.length: ',AnimationSequence.length);
 
-		Animated.sequence(Animations).start();
+		Animated.sequence(AnimationSequence).start();
 
-  }, [initialRightHandMoveX, initialRightHandMoveY]);
+  }, [initialRightHandMoveX, initialRightHandMoveY, initialLeftHandMoveX, initialLeftHandMoveY, initialRightFootMoveX, initialRightFootMoveY, initialLeftFootMoveX, initialLeftFootMoveY]);
+
+
+	// **************** //
+	// RENDERABLE PATHS //
 
 	const GesturePaths = paths.map((line, i) => {
 		const points = line ? line.map((p) => `${p.x},${p.y}`).join(" ") : "";
@@ -153,6 +265,8 @@ export default function MapSequence({ route }) {
 		);
 	});
 
+	// *********************** //
+	// RENDERABLE MOVE NUMBERS //
 	const MoveNumbers = moves.map((move, i) => {
 		if (i == 0) { return }
 		else {
@@ -175,7 +289,6 @@ export default function MapSequence({ route }) {
 				</Animated.View>
 			);
 		}
-		
 	});
 
 	// ******************************************* //
@@ -199,6 +312,9 @@ export default function MapSequence({ route }) {
 			</Svg>
 		);
 	});  
+
+	// ********************************** //
+	// RENDER APPENDAGES, APPLY ANIMATION //
 
 	const RenderAppendages = useMemo(() => holds
 		.filter(hold => hold.startingAppendage && hold.startingAppendage.length > 0)
@@ -238,7 +354,7 @@ export default function MapSequence({ route }) {
 
 					{
 						(hold.startingAppendage.includes('Right Foot')) ?
-						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialRightFootMoveX, translateY: initialRightFootMoveY }}>
 							<Svg height="70%" width="70%">
 							<RightFoot/>
 							</Svg>
@@ -248,7 +364,7 @@ export default function MapSequence({ route }) {
 
 					{
 						(hold.startingAppendage.includes('Left Foot')) ?
-						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: null, translateY: null }}>
+						<Animated.View height="100%" width="100%" style={{ alignItems: 'center', justifyContent: 'center', translateX: initialLeftFootMoveX, translateY: initialLeftFootMoveY }}>
 							<Svg height="70%" width="70%">
 							<LeftFoot/> 
 							</Svg>
