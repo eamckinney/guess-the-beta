@@ -13,6 +13,7 @@ import HomeScreen from "./components/HomeScreen";
 import CreateBeta from "./components/CreateBeta";
 import StartingHolds from "./components/StartingHolds";
 import MapSequence from "./components/MapSequence";
+import RunBeta from "./components/RunBeta"; 
 import ExploreScreen from "./components/ExploreScreen";
 
 
@@ -35,9 +36,13 @@ export default function App() {
           name="Starting Holds"
           component={StartingHolds}
         />
-         <BetaStack.Screen
+        <BetaStack.Screen
           name="Map Sequence"
           component={MapSequence}
+        />
+        <BetaStack.Screen
+          name="Run Beta"
+          component={RunBeta}
         />
       </BetaStack.Navigator>
     );
