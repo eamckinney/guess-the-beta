@@ -19,11 +19,9 @@ export default function MapSequence({ route }) {
   //USE PATHS VARIABLE TO DETERMINE COORDINATES??
   const initialMoveX = useRef(new Animated.Value(0)).current;
 	const initialMoveY = useRef(new Animated.Value(0)).current;
-  const endMoveX = 10;
-	const endMoveY = 10;
   const duration = 2000;
 
-	const rightHandPaths = paths
+	const rightHandDiff = paths
 		.filter(path => path[0].appendage && path[0].appendage.includes('Right Hand'))
 		.map((path, i) => {
 			return({
@@ -33,13 +31,35 @@ export default function MapSequence({ route }) {
 			});
 	});
 
+	let rightHandPaths = [];
+
+	for (let i = 0; i < rightHandDiff.length; i++) {
+		rightHandPaths.push(
+			{
+				i: i,
+				changeX: rightHandDiff
+					.slice(0,i+1)
+					.reduce(
+						(accumulator, currentValue) => accumulator + currentValue.changeX,
+						0,
+					),
+				changeY: rightHandDiff
+					.slice(0,i+1)
+					.reduce(
+						(accumulator, currentValue) => accumulator + currentValue.changeY,
+						0,
+					),
+			}
+		)
+	}
+
 	let RightHandAnimations = [];
 
-
-
-
 	useEffect(() => {
-    for (let i = 0; i < rightHandPaths.length; i++) {
+    for (let i = 0; i < rightHandDiff.length; i++) {
+			console.log("change x/y: ",rightHandDiff[i].changeX, rightHandDiff[i].changeY);
+			console.log("NEW change x/y: ",rightHandPaths[i].changeX, rightHandPaths[i].changeY);
+
 			RightHandAnimations.push(
 				Animated.parallel([
 					Animated.timing(initialMoveX, {
@@ -55,11 +75,6 @@ export default function MapSequence({ route }) {
 				])
 			)
 		}
-
-		console.log('rightHandPaths: ', rightHandPaths);
-		console.log('RightHandAnimations: ', RightHandAnimations);
-		
-		
 		
 		Animated.sequence(RightHandAnimations).start();
 
