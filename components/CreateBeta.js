@@ -8,16 +8,15 @@ import { styles } from '../styles.js';
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null);
+  const [holds, setHolds] = useState([]);
+  const [circleRadius, setCircleRadius] = useState(30);
+  
   
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
 
   const startingHolds = () => navigation.navigate('Starting Holds', {holds: holds, image: image});
-
-  const [holds, setHolds] = useState([]);
-  const [circleRadius, setCircleRadius] = useState(30);
-
 
   // **************** //
   // TAP TO ADD HOLDS //

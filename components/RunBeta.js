@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
+import { Text, View, TouchableOpacity, Animated, Dimensions, ImageBackground, Modal, TextInput, Button } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { styles } from "../styles.js";
@@ -13,7 +13,12 @@ export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
   const [paths, setPaths] = useState(route.params.paths);
+	const [data, setData] = useState(route.params.data);
 	//const [moves, setMoves] = useState(route.params.moves);
+
+	// This is to manage Modal State
+	const [isModalVisible, setModalVisible] = useState(false);
+	const [betaName, setBetaName] = useState("");
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
@@ -376,28 +381,61 @@ export default function MapSequence({ route }) {
 			);
 	}));
 
-	const Save = (holds, paths, image) => {
+	const toggleModalVisibility = () => {
+		setModalVisible(!isModalVisible);
+		console.log(betaName);
+	};
 
-	
+	const Save = (holds, paths, image, betaName) => {
+		toggleModalVisibility();
+
 		//console.log("IMAGE: ", image);
+		const newBeta = {
+			betaName: betaName,
+			image: image,
+			holds: holds,
+			paths: paths,
+		}
 
-	
-		
 		const store = async () => {
 			try {
-				await AsyncStorage.setItem("holds", JSON.stringify(holds));
-				await AsyncStorage.setItem("paths", JSON.stringify(paths));
-				await AsyncStorage.setItem("image", image);
+				const savedData = await AsyncStorage.getItem("data");
+        const currentData = JSON.parse(savedData);
+
+				let newData = [];
+				if (currentData) {
+					newData = [...currentData, newBeta];
+				} else {
+					newData = [newBeta];
+				}
+				
+				await AsyncStorage.setItem("data", JSON.stringify(newData));
+
 			} catch (error) {
 				console.log(error);
 			}
 		};
 	
 		store();
+
+		const retrieve = async () => {
+			try {
+				const savedData = await AsyncStorage.getItem(data);
+        const currentData = JSON.parse(savedData);
+
+				console.log("CURRENT DATA: ", currentData);
+
+			} catch (error) {
+				console.log(error);
+			}
+		};
+
+		//retrieve();
+		
+
 		goHome();
 	
 	}
-
 
   return (
 		<GestureHandlerRootView style={styles.screen}>
@@ -420,6 +458,22 @@ export default function MapSequence({ route }) {
 					{GesturePaths}
 
 				</Svg>
+
+				<Modal animationType="slide" 
+							transparent visible={isModalVisible} 
+							presentationStyle="overFullScreen" 
+							onDismiss={() => Save(holds, paths, image, betaName)}>
+						<View style={styles.viewWrapper}>
+							<View style={styles.modalView}>
+								<TextInput placeholder="Name your beta!" 
+														value={betaName} style={styles.textInput} 
+														onChangeText={(value) => setBetaName(value)} />
+								{/** This button is responsible to close the modal */}
+								<Button title="Close" onPress={() => Save(holds, paths, image, betaName)} />
+							</View>
+						</View>
+				</Modal>
+
       </View>
 
 			<View style={styles.buttonRow}>
@@ -430,7 +484,7 @@ export default function MapSequence({ route }) {
 					<Text style={styles.buttonText}>Edit</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					onPress={() => Save(holds, paths, image)}
+					onPress={() => toggleModalVisibility()}
 					style={[styles.buttonStyle, { backgroundColor: "#2A9D8F" }]}
 				>
 					<Text style={styles.buttonText}>Save</Text>

@@ -22,15 +22,12 @@ export default function HomeScreen() {
   const [image, setImage] = useState(null)
   const [holds, setHolds] = useState(null)
   const [paths, setPaths] = useState(null)
+  const [data, setData] = useState([]);
 
   const navigation = useNavigation();
   const createBeta = () => navigation.navigate('Create Beta')
-	const runBeta = () => navigation.navigate('Create Beta', {
-    screen: 'Run Beta',
-    params: {holds: holds, image: image, paths: paths}
-  });
+	
     
-    //'Run Beta', {holds: holds, image: image, paths: paths});
 
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
@@ -48,20 +45,11 @@ export default function HomeScreen() {
         // experience. Please remove this if you copy and paste the code!
         //await new Promise(resolve => setTimeout(resolve, 2000));
 
-        const savedHolds = await AsyncStorage.getItem("holds");
-        const savedPaths = await AsyncStorage.getItem("paths");
-        
-        const currentImage = await AsyncStorage.getItem("image");
-        const currentHolds = JSON.parse(savedHolds);
-        const currentPaths = JSON.parse(savedPaths);
+        const savedData = await AsyncStorage.getItem("data");
+        const currentData = JSON.parse(savedData);
 
-        setImage(currentImage);
-        setHolds(currentHolds);
-        setPaths(currentPaths);
+        setData(currentData);
 
-        console.log("CURRENT HOLDS: ", currentHolds);
-        console.log("CURRENT PATHS: ", currentPaths);
-        console.log("CURRENT IMAGE: ", currentImage);
 
       } catch (e) {
         console.warn(e);
@@ -89,6 +77,40 @@ export default function HomeScreen() {
   if (!appIsReady) {
     return null;
   }
+
+  const retrieve = async () => {
+    try {
+      const savedData = await AsyncStorage.getItem("data");
+      const currentData = JSON.parse(savedData);
+
+      setData(currentData);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  retrieve();
+  
+  const Betas = data.map((beta, i) => {
+    console.log("SINGLE BETA", beta);
+    const runBeta = () => navigation.navigate('Create Beta', {
+      screen: 'Run Beta',
+      params: {holds: beta.holds, image: beta.image, paths: beta.paths}
+    });
+    
+    return(
+      <TouchableOpacity
+        key={i}
+        onPress={() => runBeta()}
+      >
+        <Image style={styles.challenges} source={{uri:beta.image}}/>
+      </TouchableOpacity>
+    );
+
+  });
+  
+  
   
   return (
     <View
@@ -109,11 +131,7 @@ export default function HomeScreen() {
           </View>
           <Text style={styles.homeSubHead}>Your saved betas:</Text>
           <View>
-            <TouchableOpacity
-              onPress={() => runBeta()}
-            >
-              <Image style={styles.challenges} source={{uri:image}}/>
-            </TouchableOpacity>
+            {data ? Betas : <View/>}
             
           </View>
 
