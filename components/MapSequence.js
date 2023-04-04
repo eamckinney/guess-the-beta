@@ -125,7 +125,7 @@ export default function MapSequence({ route }) {
 
 					{HoldMap}
 					{RenderAppendages}
-					{MoveNumbers}
+					{/*MoveNumbers*/}
 
 					<PathTracking holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} paths={paths} changePaths={setPaths}/>
 					

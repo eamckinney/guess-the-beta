@@ -24,7 +24,12 @@ export default function MapSequence({ route }) {
 	const windowHeight = Dimensions.get("window").height;
 
 	const navigation = useNavigation();
-	const goHome = () => navigation.navigate('Challenges');
+	//const goHome = () => navigation.navigate('Challenges', {data: newData});
+
+	const goHome = () => navigation.navigate('Challenges', {
+    screen: 'Challenges',
+    params: {data: data}
+  });
 
 	// ************************************** //
 	// INITIAL ANIMATED VALUES FOR APPENDAGES //
@@ -390,19 +395,21 @@ export default function MapSequence({ route }) {
 		toggleModalVisibility();
 
 		//console.log("IMAGE: ", image);
-		const newBeta = {
-			betaName: betaName,
-			image: image,
-			holds: holds,
-			paths: paths,
-		}
-
+		
+		let newData = [];
 		const store = async () => {
 			try {
 				const savedData = await AsyncStorage.getItem("data");
         const currentData = JSON.parse(savedData);
 
-				let newData = [];
+				const newBeta = {
+					id: currentData ? currentData.length : 0,
+					betaName: betaName,
+					image: image,
+					holds: holds,
+					paths: paths,
+				}
+
 				if (currentData) {
 					newData = [...currentData, newBeta];
 				} else {
@@ -411,27 +418,14 @@ export default function MapSequence({ route }) {
 				
 				await AsyncStorage.setItem("data", JSON.stringify(newData));
 
+				setData(newData);
+
 			} catch (error) {
 				console.log(error);
 			}
 		};
 	
-		store();
-
-		const retrieve = async () => {
-			try {
-				const savedData = await AsyncStorage.getItem(data);
-        const currentData = JSON.parse(savedData);
-
-				console.log("CURRENT DATA: ", currentData);
-
-			} catch (error) {
-				console.log(error);
-			}
-		};
-
-		//retrieve();
-		
+		store();		
 
 		goHome();
 	
@@ -469,7 +463,7 @@ export default function MapSequence({ route }) {
 														value={betaName} style={styles.textInput} 
 														onChangeText={(value) => setBetaName(value)} />
 								{/** This button is responsible to close the modal */}
-								<Button title="Close" onPress={() => Save(holds, paths, image, betaName)} />
+								<Button title="Save Beta" onPress={() => Save(holds, paths, image, betaName)} />
 							</View>
 						</View>
 				</Modal>

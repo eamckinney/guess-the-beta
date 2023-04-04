@@ -67,6 +67,23 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 2,
   },
+  betaLayout: {
+    fontFamily: 'Montserrat_200ExtraLight',
+    marginVertical: 5,
+    //marginHorizontal: 10,
+    flexDirection: 'row',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+  },
+  deleteStyle: {
+    marginVertical: 40,
+    borderRadius: 10, 
+    paddingVertical: 10, 
+    paddingHorizontal: 10,
+    position: 'relative',
+    marginLeft: 10,
+    backgroundColor: "#E76F51"
+  },
   betaImage: {
     flex: 1,
     marginTop: 30, 
