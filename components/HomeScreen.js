@@ -72,9 +72,10 @@ export default function HomeScreen({route}) {
         setAppIsReady(true);
       }
     }
-
-
-    prepare();
+    if (isFocused) {
+      prepare();
+    }
+    
   }, [isFocused]);
 
   const onLayoutRootView = useCallback(async () => {
@@ -92,17 +93,21 @@ export default function HomeScreen({route}) {
     return null;
   }  
 
-  const ListItem = ({ image, id }) => {
+  const ListItem = ({ image, id, betaName }) => {
     
     return(
       <View style={styles.betaLayout}>
         <Image style={styles.challenges} source={{uri:image}}/>
-        <TouchableOpacity 
-          onPress={ () => deleteBeta(id) }
-          style={styles.deleteStyle}
-          >
-          <Text style={styles.buttonText}>Delete</Text>
-        </TouchableOpacity> 
+        <View> 
+          <Text style={styles.betaNameStyle}>{betaName}</Text>
+          <TouchableOpacity 
+            onPress={ () => deleteBeta(id) }
+            style={styles.deleteStyle}
+            >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity> 
+        </View>
+        
       </View>
    );
   }

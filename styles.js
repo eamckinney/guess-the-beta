@@ -76,13 +76,20 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
   },
   deleteStyle: {
-    marginVertical: 40,
+    marginTop: 10,
     borderRadius: 10, 
     paddingVertical: 10, 
     paddingHorizontal: 10,
     position: 'relative',
     marginLeft: 10,
     backgroundColor: "#E76F51"
+  },
+  betaNameStyle: {
+    color: '#fff',
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 15,
+    marginHorizontal: 10,
+    marginTop: 30,
   },
   betaImage: {
     flex: 1,
