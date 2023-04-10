@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { RectButton } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, FlatList, ScrollView } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
@@ -27,11 +27,6 @@ export default function HomeScreen({route}) {
   const createBeta = () => navigation.navigate('Create Beta', {
     screen: 'Create Beta'
   })
-
-  const runBeta = () => navigation.navigate('Create Beta', {
-    screen: 'Run Beta',
-    params: {holds: beta.holds, image: beta.image, paths: beta.paths}
-  });
 	
 
   let [fontsLoaded] = useFonts({
@@ -93,11 +88,18 @@ export default function HomeScreen({route}) {
     return null;
   }  
 
-  const ListItem = ({ image, id, betaName }) => {
-    
+  const ListItem = ({ image, id, betaName, holds, paths }) => {
+    const runBeta = () => navigation.navigate('Create Beta', {
+      screen: 'Run Beta',
+      params: {holds: holds, image: image, paths: paths}
+    });
     return(
       <View style={styles.betaLayout}>
-        <Image style={styles.challenges} source={{uri:image}}/>
+        <TouchableOpacity 
+            onPress={ () => runBeta() }
+            >
+            <Image style={styles.challenges} source={{uri:image}}/>
+        </TouchableOpacity>
         <View> 
           <Text style={styles.betaNameStyle}>{betaName}</Text>
           <TouchableOpacity 
@@ -174,9 +176,8 @@ export default function HomeScreen({route}) {
               
             </TouchableOpacity> 
           </View>
-
+          
           <Text style={styles.homeSubHead}>Your saved betas:</Text>
-
           <FlatList
             data={data}
             keyExtractor={item => item.id}
