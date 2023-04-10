@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_200ExtraLight',
     fontSize: 50,
     marginBottom: 30,
+    zIndex: 100
   },
   subHead: {
     color: '#fff',
@@ -22,6 +23,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginHorizontal: 20,
     marginTop: 30,
+    zIndex: 100,
   },
 
   TextForChallenges: {
@@ -29,14 +31,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_200ExtraLight',
     fontSize: 15,
     color: '#fff',
+    zIndex: 100,
 
   },
 
   textBeforeWelcomeButtons: {
     width: '100%',
     height: 105,
-
+    zIndex: 100,
   },
+
 
   buttonRowSpacer: {
     
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 'auto',
     paddingHorizontal: 0,
+    zIndex: 100,
 
   },
   bodyText: {
@@ -60,6 +65,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     height: 80,
     width: 80,
+    zIndex: 100,
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
