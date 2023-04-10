@@ -7,8 +7,9 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Svg, { G, Path } from "react-native-svg"
 import { styles } from '../styles.js';
+import { UpsideDown } from './SVGExports.js';
 
 import Entypo from '@expo/vector-icons/Entypo';
 import * as Font from 'expo-font';
@@ -166,6 +167,12 @@ export default function HomeScreen({route}) {
         <View style={styles.container}>
 
           <Text style={styles.title}>Welcome.</Text>
+
+          <View position="absolute" top={-30} right={-10} zIndex={1}>
+        <Svg >
+          <UpsideDown height={500} width={300} zIndex={1}/>
+        </Svg>
+       </View>
 
           <View style={styles.buttonLayout}>
             <TouchableOpacity 
