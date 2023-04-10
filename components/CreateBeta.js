@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { Text, View, Image, TouchableOpacity, Dimensions, Animated, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler } from "react-native-gesture-handler";
 import { styles } from '../styles.js';
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null);
+  const [holds, setHolds] = useState([]);
+  const [circleRadius, setCircleRadius] = useState(30);
+  
   
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
+  const isFocused = useIsFocused()
 
   const startingHolds = () => navigation.navigate('Starting Holds', {holds: holds, image: image});
-
-  const [holds, setHolds] = useState([]);
-  const [circleRadius, setCircleRadius] = useState(30);
-
 
   // **************** //
   // TAP TO ADD HOLDS //
@@ -110,22 +110,30 @@ export default function CreateBeta() {
   // useEffect TO LAUNCH IMAGE LIBRARY & CHOOSE IMAGE //
 
   useEffect(() => {
-    const pickImage = async () => {
-      // No permissions request is necessary for launching the image library
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-        allowsEditing:true
-      });
-      if (!result.cancelled) {
-        setImage(result.uri);
-      }
-    };
-    pickImage();
-    //navigation.navigate('Challenges');
-    console.log('image loaded!');
+    
+    if (isFocused) {
+      setImage(null);
+      setHolds([]);
+    
+    
+    
+      const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          allowsEditing:true
+        });
+        if (!result.cancelled) {
+          setImage(result.uri);
+        }
+      };
+      pickImage();
+      //navigation.navigate('Challenges');
+      console.log('image loaded!');
+    }
 
-  }, []);
+  }, [isFocused]);
 
 
   // ******************************************* //

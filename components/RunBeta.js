@@ -1,21 +1,35 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from "react-native";
-import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import { useNavigation } from '@react-navigation/native';
+import { Text, View, TouchableOpacity, Animated, Dimensions, ImageBackground, Modal, TextInput, Button } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { styles } from "../styles.js";
 import { Svg, Defs, Rect, Mask, Circle, Polyline } from 'react-native-svg';
 import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
   const [paths, setPaths] = useState(route.params.paths);
-	const [moves, setMoves] = useState(route.params.moves);
+	const [data, setData] = useState(route.params.data);
+	//const [moves, setMoves] = useState(route.params.moves);
+
+	// This is to manage Modal State
+	const [isModalVisible, setModalVisible] = useState(false);
+	const [betaName, setBetaName] = useState("");
 
 	const windowWidth = Dimensions.get("window").width;
 	const windowHeight = Dimensions.get("window").height;
 
+	const navigation = useNavigation();
+	//const goHome = () => navigation.navigate('Challenges', {data: newData});
 
+	const goHome = () => navigation.navigate('Challenges', {
+    screen: 'Challenges',
+    params: {data: data}
+  });
 
 	// ************************************** //
 	// INITIAL ANIMATED VALUES FOR APPENDAGES //
@@ -131,9 +145,6 @@ export default function MapSequence({ route }) {
 		})
 	}
 
-	console.log(rightFootDiff)
-	console.log(rightFootPaths)
-
 	// LEFT FOOT //
 	const leftFootDiff = paths
 		.map((path, i) => {
@@ -180,8 +191,6 @@ export default function MapSequence({ route }) {
 			const foundLeftHand = leftHandPaths.find(item => item.i == i+1);
 			const foundRightFoot = rightFootPaths.find(item => item.i == i+1);
 			const foundLeftFoot = leftFootPaths.find(item => item.i == i+1);
-
-			console.log(foundRightFoot);
 
 			if (foundRightHand) {
 				AnimationSequence.push(
@@ -267,7 +276,7 @@ export default function MapSequence({ route }) {
 
 	// *********************** //
 	// RENDERABLE MOVE NUMBERS //
-	const MoveNumbers = moves.map((move, i) => {
+	/*const MoveNumbers = moves.map((move, i) => {
 		if (i == 0) { return }
 		else {
 			return (
@@ -289,7 +298,7 @@ export default function MapSequence({ route }) {
 				</Animated.View>
 			);
 		}
-	});
+	});*/
 
 	// ******************************************* //
 	// MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
@@ -377,10 +386,54 @@ export default function MapSequence({ route }) {
 			);
 	}));
 
+	const toggleModalVisibility = () => {
+		setModalVisible(!isModalVisible);
+		console.log(betaName);
+	};
+
+	const Save = (holds, paths, image, betaName) => {
+		toggleModalVisibility();
+
+		//console.log("IMAGE: ", image);
+		
+		let newData = [];
+		const store = async () => {
+			try {
+				const savedData = await AsyncStorage.getItem("data");
+        const currentData = JSON.parse(savedData);
+
+				const newBeta = {
+					id: currentData ? currentData.length : 0,
+					betaName: betaName,
+					image: image,
+					holds: holds,
+					paths: paths,
+				}
+
+				if (currentData) {
+					newData = [...currentData, newBeta];
+				} else {
+					newData = [newBeta];
+				}
+				
+				await AsyncStorage.setItem("data", JSON.stringify(newData));
+
+				setData(newData);
+
+			} catch (error) {
+				console.log(error);
+			}
+		};
+	
+		store();		
+
+		goHome();
+	
+	}
 
   return (
 		<GestureHandlerRootView style={styles.screen}>
-			<Text style={styles.bodyText}>
+			<Text style={styles.subHead}>
 				Look at 'em climb!
 			</Text>
 			<StatusBar hidden={true} />
@@ -399,6 +452,22 @@ export default function MapSequence({ route }) {
 					{GesturePaths}
 
 				</Svg>
+
+				<Modal animationType="slide" 
+							transparent visible={isModalVisible} 
+							presentationStyle="overFullScreen" 
+							onDismiss={() => Save(holds, paths, image, betaName)}>
+						<View style={styles.viewWrapper}>
+							<View style={styles.modalView}>
+								<TextInput placeholder="Name your beta!" 
+														value={betaName} style={styles.textInput} 
+														onChangeText={(value) => setBetaName(value)} />
+								{/** This button is responsible to close the modal */}
+								<Button title="Save Beta" onPress={() => Save(holds, paths, image, betaName)} />
+							</View>
+						</View>
+				</Modal>
+
       </View>
 
 			<View style={styles.buttonRow}>
@@ -409,7 +478,7 @@ export default function MapSequence({ route }) {
 					<Text style={styles.buttonText}>Edit</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
-					//onPress={() => runBeta()}
+					onPress={() => toggleModalVisibility()}
 					style={[styles.buttonStyle, { backgroundColor: "#2A9D8F" }]}
 				>
 					<Text style={styles.buttonText}>Save</Text>
@@ -418,3 +487,5 @@ export default function MapSequence({ route }) {
 		</GestureHandlerRootView>
 	);
 }
+
+//function 

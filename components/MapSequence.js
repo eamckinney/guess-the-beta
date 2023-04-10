@@ -11,6 +11,7 @@ import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js'
 export default function MapSequence({ route }) {
 	const [holds, setHolds] = useState(route.params.holds);
 	const [image, setImage] = useState(route.params.image);
+	
 
 	const examplePath = [{ x: 0, y: 0, appendage: '' }];
 	const [moves, setMoves] = useState(examplePath);
@@ -124,7 +125,7 @@ export default function MapSequence({ route }) {
 
 					{HoldMap}
 					{RenderAppendages}
-					{MoveNumbers}
+					{/*MoveNumbers*/}
 
 					<PathTracking holds={holds} changeHolds={setHolds} moves={moves} changeMoves={setMoves} paths={paths} changePaths={setPaths}/>
 					
