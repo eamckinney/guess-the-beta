@@ -174,14 +174,22 @@ export default function HomeScreen({route}) {
         </Svg>
        </View>
 
+          {/* Both buttons contained within here */}
+          <View display={"flex"} flexDirection={"row"}>
           <View style={styles.buttonLayout}>
             <TouchableOpacity 
               onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
-              <Text style={styles.buttonText}>Add some betas</Text>
+              <Text style={styles.buttonText}>+ (Add Beta)</Text>
               
             </TouchableOpacity> 
+          </View>
+
+
+          <View top={20} width={100} height={100} backgroundColor={"white"} opacity={0.4} borderRadius={"2px"}>
+
+          </View>
           </View>
           
           <Text style={styles.homeSubHead}>Your saved betas:</Text>
