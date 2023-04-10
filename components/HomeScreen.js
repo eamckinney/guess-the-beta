@@ -168,7 +168,7 @@ export default function HomeScreen({route}) {
 
           <Text style={styles.title}>Welcome.</Text>
 
-          <View position="absolute" top={-30} right={-10} zIndex={1}>
+          <View position="absolute" top={-180} right={-50} zIndex={-1}>
         <Svg >
           <UpsideDown height={500} width={300} zIndex={1}/>
         </Svg>
