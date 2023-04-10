@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import 'react-native-gesture-handler';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, View, Button, Image, TouchableOpacity, Animated, FlatList, ScrollView } from 'react-native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SplashScreen from 'expo-splash-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { styles } from '../styles.js';
 import { SvgXml } from "react-native-svg";
@@ -19,35 +21,27 @@ import { UpsideDown } from './SVGExports.js';
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-export default function HomeScreen() {
+export default function HomeScreen({route}) {
   const [appIsReady, setAppIsReady] = useState(false);
-  
-  const navigation = useNavigation();
-  const createBeta = () => navigation.navigate('Create Beta')
+  const [data, setData] = useState([]);
+  //const [data, setData] = useState(route.params.data);
+  //console.log(route);
 
-  const [image,setImage] = useState(null)
-  
-  //Orange Mountain SVG - Not displaying but displacing other assets
-  const xml = '<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 296 362.21"><defs><style>.cls-1{fill:#c18053;}.cls-2{fill:#e0925c;}</style></defs><g id="Layer_1-2"><g><path class="cls-2" d="m0,.37h296v361.84L0,.37Z"/><path class="cls-1" d="m289.03,337.57L111.52,0,0,.37l296,361.84-6.97-24.64Z"/></g></g></svg>'
-  
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-      allowsEditing:true
-    });
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
-  
+  const navigation = useNavigation();
+  const createBeta = () => navigation.navigate('Create Beta', {
+    screen: 'Create Beta'
+  })
+
   let [fontsLoaded] = useFonts({
     Montserrat_200ExtraLight,
     Montserrat_400Regular
   });
 
+  const isFocused = useIsFocused()
+  console.log(performance.now());
+
   useEffect(() => {
+    
     async function prepare() {
       try {
         // Pre-load fonts, make any API calls you need to do here
@@ -57,6 +51,18 @@ export default function HomeScreen() {
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         //await new Promise(resolve => setTimeout(resolve, 2000));
+
+        if (isFocused) {
+          const savedData = await AsyncStorage.getItem("data");
+          const currentData = JSON.parse(savedData);
+
+          setData(currentData);
+        }
+        
+      
+        
+
+
       } catch (e) {
         console.warn(e);
       } finally {
@@ -64,9 +70,11 @@ export default function HomeScreen() {
         setAppIsReady(true);
       }
     }
-
-    prepare();
-  }, []);
+    if (isFocused) {
+      prepare();
+    }
+    
+  }, [isFocused]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady & fontsLoaded) {
@@ -81,8 +89,60 @@ export default function HomeScreen() {
 
   if (!appIsReady) {
     return null;
+  }  
+
+  const ListItem = ({ image, id, betaName, holds, paths }) => {
+    const runBeta = () => navigation.navigate('Create Beta', {
+      screen: 'Run Beta',
+      params: {holds: holds, image: image, paths: paths}
+    });
+    return(
+      <View style={styles.betaLayout}>
+        <TouchableOpacity 
+            onPress={ () => runBeta() }
+            >
+            <Image style={styles.challenges} source={{uri:image}}/>
+        </TouchableOpacity>
+        <View> 
+          <Text style={styles.betaNameStyle}>{betaName}</Text>
+          <TouchableOpacity 
+            onPress={ () => deleteBeta(id) }
+            style={styles.deleteStyle}
+            >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity> 
+        </View>
+        
+      </View>
+   );
   }
 
+  // not working... 
+  // <Swipeable renderRightActions={renderRightActions}> around <View> in ListItem
+  const renderRightActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [0.7, 0]
+    })
+    return (
+      <>
+        <TouchableOpacity onPress={() => alert('Delete button pressed')}>
+          <View
+            style={{ flex: 1, backgroundColor: 'red', justifyContent: 'center' }}>
+            <Animated.Text
+              style={{
+                color: 'white',
+                paddingHorizontal: 10,
+                fontWeight: '600',
+                transform: [{ scale }]
+              }}>
+              Delete
+            </Animated.Text>
+          </View>
+        </TouchableOpacity>
+      </>
+    )
+  }
   const PageDivider = ({ hasExtraLayer = true, fill = "#4279DD" }) => (
     <>
       <Svg width="100%" height="320" preserveAspectRatio="xMinYMax" viewBox="0 0 1440 320">
@@ -96,6 +156,23 @@ export default function HomeScreen() {
       <View style={styles.container} />
     </>
    )
+  const deleteBeta = async (id) => {
+    try {
+      console.log("id",id);
+      console.log("data",data);
+      console.log("length before delete",data.length);
+
+      let newData = data.filter(beta => beta.id !== id);
+
+      await AsyncStorage.setItem("data", JSON.stringify(newData));
+      setData(newData);
+
+      console.log("length after delete",data.length);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
   
   return (
     <View
@@ -151,15 +228,19 @@ export default function HomeScreen() {
               //onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
-              <Text style={styles.buttonText}></Text>
-            </TouchableOpacity>  
-          </View>
-
+              <Text style={styles.buttonText}>Add some betas</Text>
+              
+            </TouchableOpacity> 
           </View>
           
-          
-
-      </View>
+          <Text style={styles.homeSubHead}>Your saved betas:</Text>
+          <FlatList
+            data={data}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => <ListItem {...item} />}
+          />
+        </View>
+    </View>
     </View>
   );
 }

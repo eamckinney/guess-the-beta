@@ -6,6 +6,8 @@ import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -13,6 +15,7 @@ import HomeScreen from "./components/HomeScreen";
 import CreateBeta from "./components/CreateBeta";
 import StartingHolds from "./components/StartingHolds";
 import MapSequence from "./components/MapSequence";
+import RunBeta from "./components/RunBeta"; 
 import ExploreScreen from "./components/ExploreScreen";
 
 
@@ -20,6 +23,9 @@ export default function App() {
   const Tab = createBottomTabNavigator();
   const BetaStack = createStackNavigator();
 
+  useEffect(() => {
+    //AsyncStorage.clear();
+	}, []);
 
   function BetaStackScreen() {
     return (
@@ -35,9 +41,13 @@ export default function App() {
           name="Starting Holds"
           component={StartingHolds}
         />
-         <BetaStack.Screen
+        <BetaStack.Screen
           name="Map Sequence"
           component={MapSequence}
+        />
+        <BetaStack.Screen
+          name="Run Beta"
+          component={RunBeta}
         />
       </BetaStack.Navigator>
     );

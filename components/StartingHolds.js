@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Text, View, Image, TouchableOpacity, Animated, Dimensions } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Animated, Dimensions, ImageBackground } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from 'expo-status-bar';
 import { styles } from '../styles.js';
-
+import { RightHand, LeftHand, RightFoot, LeftFoot } from './StartingHoldSVGs.js';
+import { Svg, Defs, Rect, Mask, Circle } from 'react-native-svg';
 
 export default function StartingHolds({ route }) {
   
@@ -20,7 +21,7 @@ export default function StartingHolds({ route }) {
   const selectedBackground = 'rgba(255, 255, 255, 0.2)';
   const selectedBorder = 'rgba(255, 255, 255, 1.0)';
 
-  const startingPosition = ['Right Hand Start', 'Left Hand Start', 'Right Foot Start', 'Left Foot Start'];
+  const startingPosition = ['Right Hand', 'Left Hand', 'Right Foot', 'Left Foot'];
   
   const [seq, setSeq] = useState();
   const [labelText, setLabelText] = useState();
@@ -59,13 +60,14 @@ export default function StartingHolds({ route }) {
         
         newHolds[selected].backgroundColor = selectedBackground;
         newHolds[selected].borderColor = selectedBorder;
-        newHolds[selected].start = startingPosition[seq-1];
+        newHolds[selected].appendage = [startingPosition[seq-1]];
+        newHolds[selected].startingAppendage = [startingPosition[seq-1]];
         setHolds(newHolds);
         
         setSeq(seq+1);
         setLabelText(startingPosition[seq]);
-        console.log('seq: ', seq)
-        console.log(holds);
+        //console.log('seq: ', seq)
+        //console.log(holds);
       }
 
     });
@@ -79,7 +81,7 @@ export default function StartingHolds({ route }) {
     for (let i = 0; i < holds.length; i++) {
       newHolds[i].backgroundColor = standardBackground;
       newHolds[i].borderColor = standardBorder;
-      newHolds[i].start = '';
+      newHolds[i].appendage = [];
     }
     setHolds(newHolds);
     setSeq(1);
@@ -90,27 +92,56 @@ export default function StartingHolds({ route }) {
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
-  const renderHolds = holds.map((hold, i) => {
+  const renderAppendages = holds
+    .filter(hold => hold.startingAppendage && hold.startingAppendage.length > 0)
+    .map((hold, i) => {
     return(
-      <Animated.View key={i} style={[styles.circleShape, 
+      <Animated.View key={i} style={[
         { 
           position: 'absolute',
           left: hold.x - (hold.radius / 2),
-          top: hold.y - (hold.radius / 2),
+          top: hold.y - (hold.radius / 2) + 1,
           width: hold.radius,
           height: hold.radius,
           borderRadius: (hold.radius / 2),
-          backgroundColor: hold.backgroundColor,
-          borderColor: hold.borderColor,
           alignItems: 'center',
           justifyContent: 'center',
         },
       ]}>
-        <Text>{hold.start}</Text>
+        
+        <Svg height="70%" width="70%">
+        { (hold.appendage && hold.appendage.includes('Right Hand')) ? <RightHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Hand')) ? <LeftHand/> : null }
+        { (hold.appendage && hold.appendage.includes('Right Foot')) ? <RightFoot/> : null }
+        { (hold.appendage && hold.appendage.includes('Left Foot')) ? <LeftFoot/> : null }
+        </Svg>
+        
       </Animated.View>
       
     );
   });
+
+
+
+  const circles = holds.map((hold, i) => {
+    return(
+      <Circle key={i} r={hold.radius/2} cx={hold.x} cy={hold.y-28} fill="black"/>
+    );
+  });
+
+  const HoldMap = () => {
+    return(
+      <Svg height="100%" width="100%">
+        <Defs>
+          <Mask id="mask" x="0" y="0" height="100%" width="100%">
+            <Rect height="100%" width="100%" fill="#fff" />
+            {circles}
+          </Mask>
+        </Defs>
+        <Rect height="100%" width="100%" fill="rgba(0, 0, 0, 0.5)" mask="url(#mask)" fill-opacity="0" />
+      </Svg>
+    );
+  };
 
   const label = 
     seq < 5 
@@ -126,15 +157,18 @@ export default function StartingHolds({ route }) {
     </TouchableOpacity>
   
   return (
-    <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.bodyText}>Next, select your starting hands and feet by tapping the holds.</Text>
+    <GestureHandlerRootView style={[styles.screen]} >
+      <Text style={styles.subHead}>2 / Tap your <Text style={{fontWeight: 'bold'}}>starting</Text> hands and feet.</Text>
       <StatusBar hidden={true} />
 
       <GestureDetector gesture={tap} style={{ flex: 1 }}>
         <Animated.View style={{ height: windowHeight*.77, width: windowWidth, alignItems: 'center', }}>
-          { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> } 
+          { image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> } 
+          
+          <HoldMap />
+          {renderAppendages}
           { label }
-          { renderHolds }
+          
         </Animated.View>
       </GestureDetector>
 

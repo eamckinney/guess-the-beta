@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { Text, View, Image, TouchableOpacity, Dimensions, Animated, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { Gesture, GestureDetector, GestureHandlerRootView, PinchGestureHandler } from "react-native-gesture-handler";
 import { styles } from '../styles.js';
 
 export default function CreateBeta() {
   const [image, setImage] = useState(null);
+  const [holds, setHolds] = useState([]);
+  const [circleRadius, setCircleRadius] = useState(30);
+  
   
   const navigation = useNavigation();
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
+  const isFocused = useIsFocused()
 
   const startingHolds = () => navigation.navigate('Starting Holds', {holds: holds, image: image});
-
-  const [holds, setHolds] = useState([]);
-  const [circleRadius, setCircleRadius] = useState(30);
-
 
   // **************** //
   // TAP TO ADD HOLDS //
@@ -38,8 +38,8 @@ export default function CreateBeta() {
       }
     ]);
     setCircleRadius(30);
-    console.log(`circle added at ${x} and ${y}`);
-    console.log("holds.length: " + holds.length);
+    //console.log(`circle added at ${x} and ${y}`);
+    //console.log("holds.length: " + holds.length);
 
   }
 
@@ -48,12 +48,12 @@ export default function CreateBeta() {
 
   const undo = () => {
 
-    console.log("hold to remove: " + holds[holds.length-1].x, holds[holds.length-1].y);
+    //console.log("hold to remove: " + holds[holds.length-1].x, holds[holds.length-1].y);
     setHolds((current) =>
       current.slice(0,-1)
     );
 
-    console.log("undo holds.length: " + holds.length);
+    //console.log("undo holds.length: " + holds.length);
   }
 
   // ******************* //
@@ -67,7 +67,7 @@ export default function CreateBeta() {
     scaleVal.setValue(event.nativeEvent.scale);
     if (event.nativeEvent.scale != 1) {
 
-      console.log(event.nativeEvent);
+      //console.log(event.nativeEvent);
 
       let newHolds = [...holds];
       newHolds[(newHolds.length-1)].radius = circleRadius * scaleVal._value;
@@ -110,29 +110,37 @@ export default function CreateBeta() {
   // useEffect TO LAUNCH IMAGE LIBRARY & CHOOSE IMAGE //
 
   useEffect(() => {
-    const pickImage = async () => {
-      // No permissions request is necessary for launching the image library
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-        allowsEditing:true
-      });
-      if (!result.cancelled) {
-        setImage(result.uri);
-      }
-    };
-    pickImage();
-    //navigation.navigate('Challenges');
-    console.log('image loaded!');
+    
+    if (isFocused) {
+      setImage(null);
+      setHolds([]);
+    
+    
+    
+      const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          allowsEditing:true
+        });
+        if (!result.cancelled) {
+          setImage(result.uri);
+        }
+      };
+      pickImage();
+      //navigation.navigate('Challenges');
+      console.log('image loaded!');
+    }
 
-  }, []);
+  }, [isFocused]);
 
 
   // ******************************************* //
   // MAP HOLDS ARRAY TO RENDERABLE ANIMATED.VIEW //
   
   const renderHolds = holds.map((hold, i) => {
-    console.log(holds);
+    //console.log(holds);
     if (i < holds.length-1) {
       return(
         <Animated.View key={i} style={[styles.circleShape, 
@@ -172,16 +180,16 @@ export default function CreateBeta() {
   });
 
   return (
-    <GestureHandlerRootView style={styles.screen}>
-      <Text style={styles.subHead}>Select your holds.</Text>
+    <GestureHandlerRootView style={[styles.screen]}>
+      <Text style={styles.subHead}>1 / Tap the holds on your problem.</Text>
       <StatusBar hidden={true} />
       
       <GestureDetector gesture={gestures} style={{ flex: 1 }}>
         <PinchGestureHandler onGestureEvent={handlePinch} onHandlerStateChange={_onPinchStateChange}>
           <Animated.View style={{ height: windowHeight*.77, width: windowWidth }}>
 
-            { image && <Image source={{uri:image}} style={[styles.betaImage, { height: windowHeight, width: windowWidth }]} /> }
-            { holds.length > 0 && renderHolds }
+          { image && <ImageBackground source={{uri:image}} style={[styles.betaImage, { height: windowHeight*.77, width: windowWidth }]} /> }
+          { holds.length > 0 && renderHolds }
 
           </Animated.View>
         </PinchGestureHandler>

@@ -1,4 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   screen: {
@@ -20,7 +23,7 @@ const styles = StyleSheet.create({
   subHead: {
     color: '#fff',
     fontFamily: 'Montserrat_200ExtraLight',
-    fontSize: 30,
+    fontSize: 15,
     marginHorizontal: 20,
     marginTop: 30,
     zIndex: 100,
@@ -53,10 +56,17 @@ const styles = StyleSheet.create({
     zIndex: 100,
 
   },
-  bodyText: {
+  homeSubHead: {
     color: '#fff',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 16,
+    marginTop: 40,
+  },
+  challenges: {
+    marginTop: 10,
+    height: 100,
+    width: 100,
+    borderRadius: 10,
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
@@ -89,6 +99,30 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 2,
   },
+  betaLayout: {
+    fontFamily: 'Montserrat_200ExtraLight',
+    marginVertical: 5,
+    //marginHorizontal: 10,
+    flexDirection: 'row',
+    //alignItems: 'center',
+    //justifyContent: 'center',
+  },
+  deleteStyle: {
+    marginTop: 10,
+    borderRadius: 10, 
+    paddingVertical: 10, 
+    paddingHorizontal: 10,
+    position: 'relative',
+    marginLeft: 10,
+    backgroundColor: "#E76F51"
+  },
+  betaNameStyle: {
+    color: '#fff',
+    fontFamily: 'Montserrat_200ExtraLight',
+    fontSize: 15,
+    marginHorizontal: 10,
+    marginTop: 30,
+  },
   betaImage: {
     flex: 1,
     marginTop: 30, 
@@ -109,6 +143,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
     borderColor: "#FFFFFF",
     borderWidth: 1,
+  },
+
+  viewWrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  modalView: {
+      alignItems: "center",
+      justifyContent: "center",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      elevation: 5,
+      transform: [{ translateX: -(windowWidth * 0.4) }, 
+                  { translateY: -90 }],
+      height: 180,
+      width: windowWidth * 0.8,
+      backgroundColor: "#fff",
+      borderRadius: 7,
+  },
+  textInput: {
+      width: "80%",
+      borderRadius: 5,
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      borderColor: "rgba(0, 0, 0, 0.2)",
+      borderWidth: 1,
+      marginBottom: 8,
   },
   
 })
