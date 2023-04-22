@@ -41,10 +41,11 @@ const styles = StyleSheet.create({
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
     backgroundColor: "grey",
-    opacity: 0.4,
+    opacity: 0.5,
     borderRadius: 3,
     paddingVertical: 12.5,
     paddingHorizontal: 25,
+    backgroundImage: "",
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
@@ -62,6 +63,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     position: "relative",
+    fontSize: 16,
+    fontWeight: "bold",
+    opacity: 1,
+    color: "#fff",
+    fontFamily: 'Montserrat_400Regular',
+    alignSelf: "center",
+    textTransform: "uppercase",
+    letterSpacing: 2,
+
+  },
+
+  addBetaText: {
+    position: "relative",
     fontSize: 50,
     fontWeight: "bold",
     opacity: 1,
@@ -75,10 +89,10 @@ const styles = StyleSheet.create({
   betaLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
     marginVertical: 5,
-    //marginHorizontal: 10,
+    marginHorizontal: 10,
     flexDirection: 'row',
-    //alignItems: 'center',
-    //justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   deleteStyle: {
     marginTop: 10,
@@ -87,7 +101,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     position: 'relative',
     marginLeft: 10,
-    backgroundColor: "#E76F51"
+    backgroundColor: "#E76F51",
+    fontSize: 15,
   },
   betaNameStyle: {
     color: '#fff',

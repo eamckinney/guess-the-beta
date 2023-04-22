@@ -181,15 +181,13 @@ export default function HomeScreen({route}) {
               onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
-              <Text style={styles.buttonText}>+</Text>
+              <Text style={styles.addBetaText}>+</Text>
               
             </TouchableOpacity> 
           </View>
 
 
-          <View top={20} width={100} height={100} backgroundColor={"white"} opacity={0.4} borderRadius={"2px"}>
-
-          </View>
+        
           </View>
           
           <Text style={styles.homeSubHead}>Your saved betas:</Text>
