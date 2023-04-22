@@ -40,10 +40,11 @@ const styles = StyleSheet.create({
   },
   buttonLayout: {
     fontFamily: 'Montserrat_200ExtraLight',
-    backgroundColor: "#2A9D8F",
-    borderRadius: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 12
+    backgroundColor: "grey",
+    opacity: 0.4,
+    borderRadius: 3,
+    paddingVertical: 12.5,
+    paddingHorizontal: 25,
   },
   buttonRow: {
     fontFamily: 'Montserrat_200ExtraLight',
@@ -60,12 +61,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50 
   },
   buttonText: {
-    fontSize: 13,
+    position: "relative",
+    fontSize: 50,
+    fontWeight: "bold",
+    opacity: 1,
     color: "#fff",
     fontFamily: 'Montserrat_400Regular',
     alignSelf: "center",
     textTransform: "uppercase",
     letterSpacing: 2,
+
   },
   betaLayout: {
     fontFamily: 'Montserrat_200ExtraLight',

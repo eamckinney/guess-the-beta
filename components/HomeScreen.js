@@ -175,13 +175,13 @@ export default function HomeScreen({route}) {
        </View>
 
           {/* Both buttons contained within here */}
-          <View display={"flex"} flexDirection={"row"}>
-          <View style={styles.buttonLayout}>
+          <View display={"flex"} flexDirection={"row"} justifyContent={"space-evenly"}>
+          <View>
             <TouchableOpacity 
               onPress={ () => createBeta() }
               style={styles.buttonLayout}
               >
-              <Text style={styles.buttonText}>+ (Add Beta)</Text>
+              <Text style={styles.buttonText}>+</Text>
               
             </TouchableOpacity> 
           </View>
