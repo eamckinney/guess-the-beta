@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Montserrat_200ExtraLight',
     fontSize: 50,
-    marginBottom: 30,
+    marginBottom: 0,
   },
   subHead: {
     color: '#fff',
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Montserrat_400Regular',
     fontSize: 16,
-    marginTop: 40,
+    marginTop: 10,
   },
   challenges: {
     marginTop: 10,

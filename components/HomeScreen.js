@@ -167,6 +167,7 @@ export default function HomeScreen({route}) {
         <View style={styles.container}>
 
           <Text style={styles.title}>Welcome.</Text>
+          <Text style={styles.homeSubHead}>Find and create your Betas below</Text>
 
           <View position="absolute" top={-180} right={-50} zIndex={-1}>
         <Svg >
@@ -190,7 +191,7 @@ export default function HomeScreen({route}) {
         
           </View>
           
-          <Text style={styles.homeSubHead}>Your saved betas:</Text>
+          
           <FlatList
             data={data}
             keyExtractor={item => item.id}
